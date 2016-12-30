@@ -1,7 +1,7 @@
 enum { B_NONE, B_PANEL1, B_PANEL2, B_PANEL3 } Behaviours; // how the tiles react
 
 // east : SCROLL_ENABLED NSEW (ou pas)
-// objects divers + ce qu'on en fait (yc invisbibles / zones si defini sur la map) 
+// objects divers + ce qu'on en fait (yc invisbibles / zones si defini sur la map)
 // par defaut, jump to NSEW piece (oui + simple) si touche le bord.
 
 
@@ -14,10 +14,10 @@ struct Player {
 	int lefthand=0; // objectid in right hand (B)
 	int armor=0; // which armor we have now
 
-	int invincible_frames_left=0; // time left 
+	int invincible_frames_left=0; // time left
 
 	uint8_t inventory[2][16]; // list of object_id, number of objects/ammo.
-}
+};
 
 
 // local room data
@@ -30,28 +30,28 @@ void (*on_action(int));
 #define MAXROOM_DATA 60000
 struct room {
 	// variable len data
-	char data[MAXROOM_DATA]; 
+	char data[MAXROOM_DATA];
 
-	/* 
-	made of : 
+	/*
+	made of :
 
-	u8 width, height; // tilemap size in 16x16 tiles 
+	u8 width, height; // tilemap size in 16x16 tiles
 	u8 nbtiles
 	u8 nbobjects; // sprite data len
 	u8 nbsprites;
 
-	
+
 	u8 tilemap[width*height]
 	u8 tileset[256][nbtiles]
 
 	u8 object data[4][nbobjects]
-		[x,y,type,sprite_id, (4 extra object data : life ?) ] // args for object_init callback. -> ou array tel quel 
-	
+		[x,y,type,sprite_id, (4 extra object data : life ?) ] // args for object_init callback. -> ou array tel quel
+
 	buffersize # max unzipped animation frame for this sprite
 	u8 display_buffers[nbsprites][buffersize];
 
 	u32 sprites_ptr[nbsprites] // variable data a reecrire au load
-	[nbsprites fois] 
+	[nbsprites fois]
 		u8 buffer[buffersize] (specific to max unzipped frame)
 		nb_animations
 		u16 anim_ofs[nbanimation]; // offset in anim_file
@@ -59,7 +59,7 @@ struct room {
 
 	Song song (avec free SFX ? non a part)	XXX sounds/music/sfx : a song with extra SFX !
 
-	*/  
+	*/
 }; // loaded as is from zipped flash. rewrite pointers/sprites on load .
 
 // flash
@@ -81,9 +81,9 @@ void frame_appear() {
 
 
 	// blinks player
-	if ((vga_frame/16)%2) 
+	if ((vga_frame/16)%2)
 		player->frame=0
-	else 
+	else
 		player->frame=PLAYER_DOWN0;
 
 	if (vga_frame>3*60) {
@@ -114,7 +114,7 @@ collide_tile(int pos)
 		case B_NONE : player->speed=4;
 		case B_SLOW : player->speed=2;
 		case B_PANEL1: ; break;
-		case B_DIE: ; break; // appear in 
+		case B_DIE: ; break; // appear in
 	}
 }
 
@@ -128,9 +128,9 @@ action_tile(int pos)
 
 
 
-void line_background(void) 
+void line_background(void)
 {
 	// globals bg_x, bg_y, vram, palette ...
-	
+
 
 }

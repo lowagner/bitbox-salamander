@@ -1,41 +1,302 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="14" height="12" tilewidth="16" tileheight="16" nextobjectid="10">
- <tileset firstgid="1" name="tset_room_nuit" tilewidth="16" tileheight="16" tilecount="112">
-  <image source="tset_room_nuit.png" width="224" height="128"/>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="15" tilewidth="16" tileheight="16" nextobjectid="25">
+ <tileset firstgid="1" name="tilemap" tilewidth="16" tileheight="16" tilecount="84" columns="14">
+  <image source="room_dark.png" width="224" height="96"/>
+  <terraintypes>
+   <terrain name="obstacle" tile="-1"/>
+   <terrain name="special1" tile="-1"/>
+   <terrain name="special2" tile="-1"/>
+  </terraintypes>
+  <tile id="3" terrain="0,0,0,0">
+   <properties>
+    <property name="is_blocking" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="4" terrain="0,0,0,0">
+   <properties>
+    <property name="is_blocking" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="5" terrain="0,0,0,0">
+   <properties>
+    <property name="is_blocking" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="6" terrain="0,0,0,0"/>
+  <tile id="7" terrain="0,0,0,0"/>
+  <tile id="8" terrain="0,0,0,0"/>
+  <tile id="9" terrain="0,0,0,0">
+   <properties>
+    <property name="is_blocking" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="10" terrain="1,1,1,1">
+   <properties>
+    <property name="is_blocking" type="bool" value="true"/>
+    <property name="is_special2" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="11" terrain="1,1,1,1">
+   <properties>
+    <property name="is_blocking" type="bool" value="false"/>
+    <property name="is_special2" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="12" terrain="0,0,0,0"/>
+  <tile id="13" terrain="2,2,2,2"/>
+  <tile id="15">
+   <properties>
+    <property name="is_special1" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="17" terrain="0,0,0,0">
+   <properties>
+    <property name="is_blocking" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="19" terrain="0,0,0,0">
+   <properties>
+    <property name="is_blocking" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="20" terrain="0,0,0,0">
+   <properties>
+    <property name="is_blocking" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="22" terrain="0,0,0,0">
+   <properties>
+    <property name="is_blocking" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="23" terrain="0,0,0,0">
+   <properties>
+    <property name="is_blocking" type="bool" value="false"/>
+   </properties>
+  </tile>
+  <tile id="24" terrain="0,0,0,0">
+   <properties>
+    <property name="is_blocking" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="25" terrain="0,,0,">
+   <properties>
+    <property name="is_blocking" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="31" terrain="0,0,0,0">
+   <properties>
+    <property name="is_blocking" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="32" terrain="0,0,0,0">
+   <properties>
+    <property name="is_blocking" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="33" terrain="0,0,0,0">
+   <properties>
+    <property name="is_blocking" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="34" terrain="0,0,0,0">
+   <properties>
+    <property name="is_blocking" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="36" terrain="0,0,0,0">
+   <properties>
+    <property name="is_blocking" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="37" terrain=",,,0"/>
+  <tile id="38" terrain=",,0,0"/>
+  <tile id="39" terrain=",,0,"/>
+  <tile id="42" terrain="0,0,0,0"/>
+  <tile id="43" terrain="0,0,0,0"/>
+  <tile id="46" terrain="0,0,0,0">
+   <properties>
+    <property name="is_blocking" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="47" terrain="0,0,0,0">
+   <properties>
+    <property name="is_blocking" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="48" terrain="0,0,0,0"/>
+  <tile id="49" terrain="0,0,0,0"/>
+  <tile id="50" terrain="0,0,0,0"/>
+  <tile id="51" terrain=",0,,0"/>
+  <tile id="52" terrain="0,0,0,0"/>
+  <tile id="53" terrain="0,,0,"/>
+  <tile id="56" terrain="0,0,0,0"/>
+  <tile id="57" terrain="0,0,0,0"/>
+  <tile id="60" terrain="0,0,0,0">
+   <properties>
+    <property name="is_blocking" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="61" terrain="0,0,0,0">
+   <properties>
+    <property name="is_blocking" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="65" terrain=",0,,"/>
+  <tile id="66" terrain="0,0,,"/>
+  <tile id="67" terrain="0,,,"/>
  </tileset>
- <tileset firstgid="113" name="coder" tilewidth="24" tileheight="24" tilecount="2">
-  <image source="../examples/BrowserQuest-master/1/coder.png" width="48" height="24"/>
+ <tileset firstgid="85" name="hero_cloth" tilewidth="32" tileheight="32" tilecount="85" columns="5">
+  <image source="../../../../../../../bitbox-projects/miniz/rooms/hero_cloth.png" trans="ff24ff" width="160" height="544"/>
+  <tile id="0">
+   <animation>
+    <frame tileid="0" duration="100"/>
+    <frame tileid="1" duration="100"/>
+    <frame tileid="4" duration="100"/>
+   </animation>
+  </tile>
+  <tile id="5">
+   <objectgroup draworder="index">
+    <object id="1" x="10.625" y="17.5" width="11.375" height="7.28409"/>
+   </objectgroup>
+   <animation>
+    <frame tileid="5" duration="100"/>
+    <frame tileid="6" duration="100"/>
+    <frame tileid="5" duration="100"/>
+    <frame tileid="8" duration="100"/>
+   </animation>
+  </tile>
+  <tile id="10">
+   <animation>
+    <frame tileid="5" duration="100"/>
+    <frame tileid="11" duration="300"/>
+   </animation>
+  </tile>
+  <tile id="15">
+   <animation>
+    <frame tileid="15" duration="100"/>
+    <frame tileid="16" duration="100"/>
+    <frame tileid="19" duration="100"/>
+   </animation>
+  </tile>
+  <tile id="20">
+   <objectgroup draworder="index">
+    <object id="1" x="10.25" y="16.4659" width="11.75" height="9.53409"/>
+   </objectgroup>
+   <animation>
+    <frame tileid="20" duration="250"/>
+    <frame tileid="21" duration="250"/>
+    <frame tileid="20" duration="250"/>
+    <frame tileid="23" duration="250"/>
+   </animation>
+  </tile>
+  <tile id="25">
+   <animation>
+    <frame tileid="20" duration="100"/>
+    <frame tileid="26" duration="100"/>
+   </animation>
+  </tile>
+  <tile id="30">
+   <animation>
+    <frame tileid="30" duration="100"/>
+    <frame tileid="31" duration="100"/>
+    <frame tileid="34" duration="100"/>
+   </animation>
+  </tile>
+  <tile id="35">
+   <objectgroup draworder="index">
+    <object id="1" x="10.125" y="16.6932" width="11.75" height="8.92045"/>
+   </objectgroup>
+   <animation>
+    <frame tileid="35" duration="250"/>
+    <frame tileid="36" duration="250"/>
+    <frame tileid="35" duration="250"/>
+    <frame tileid="38" duration="250"/>
+   </animation>
+  </tile>
+  <tile id="40">
+   <objectgroup draworder="index">
+    <object id="1" x="9.875" y="16.75" width="12.25" height="10.5"/>
+   </objectgroup>
+   <animation>
+    <frame tileid="35" duration="250"/>
+    <frame tileid="41" duration="250"/>
+    <frame tileid="41" duration="250"/>
+    <frame tileid="41" duration="250"/>
+   </animation>
+  </tile>
+  <tile id="45">
+   <objectgroup draworder="index">
+    <object id="1" x="10.75" y="15.125" width="10.375" height="11.375"/>
+   </objectgroup>
+   <animation>
+    <frame tileid="45" duration="100"/>
+    <frame tileid="46" duration="100"/>
+    <frame tileid="45" duration="100"/>
+    <frame tileid="48" duration="100"/>
+   </animation>
+  </tile>
+  <tile id="50">
+   <objectgroup draworder="index">
+    <object id="1" x="9.125" y="17.875" width="11.125" height="10.5"/>
+   </objectgroup>
+   <animation>
+    <frame tileid="50" duration="250"/>
+    <frame tileid="51" duration="250"/>
+   </animation>
+  </tile>
+  <tile id="55">
+   <animation>
+    <frame tileid="55" duration="100"/>
+    <frame tileid="56" duration="100"/>
+    <frame tileid="59" duration="100"/>
+   </animation>
+  </tile>
+  <tile id="60">
+   <animation>
+    <frame tileid="45" duration="100"/>
+    <frame tileid="61" duration="100"/>
+   </animation>
+  </tile>
  </tileset>
- <tileset firstgid="115" name="item-vase" tilewidth="16" tileheight="16" tilecount="1">
-  <image source="item-vase.png" width="16" height="16"/>
+ <tileset firstgid="170" name="item-vase" tilewidth="16" tileheight="16" tilecount="1" columns="1">
+  <image source="../../../../../../../bitbox-projects/miniz/rooms/item-vase.png" trans="ff24ff" width="16" height="16"/>
+  <tile id="0">
+   <objectgroup draworder="index">
+    <object id="1" x="1.18182" y="2.45455" width="14" height="12.2727"/>
+   </objectgroup>
+  </tile>
  </tileset>
- <tileset firstgid="116" name="item-bed" tilewidth="38" tileheight="26" tilecount="1">
+ <tileset firstgid="171" name="item-bed" tilewidth="38" tileheight="26" tilecount="1" columns="1">
   <image source="item-bed.png" width="38" height="26"/>
+  <tile id="0">
+   <objectgroup draworder="index">
+    <object id="1" x="0.545455" y="4" width="37.2727" height="21.6364"/>
+   </objectgroup>
+  </tile>
  </tileset>
- <layer name="map" width="14" height="12">
+ <layer name="layer" width="20" height="15">
   <data encoding="csv">
-1,2,2,2,2,2,2,2,2,2,2,2,2,3,
-15,5,55,6,6,27,28,27,28,6,13,14,7,17,
-15,19,67,68,69,37,37,37,37,37,37,37,63,17,
-15,19,81,20,83,37,37,37,37,37,37,37,77,17,
-15,19,95,96,97,37,37,37,37,37,37,37,63,17,
-15,19,37,37,37,37,37,37,37,37,37,37,77,17,
-15,33,34,36,37,37,37,37,37,37,38,34,35,17,
-29,30,72,19,37,37,37,37,37,37,21,73,30,31,
-20,20,15,19,37,37,37,37,37,37,21,17,20,20,
-20,20,15,33,34,34,34,34,34,34,35,17,20,20,
-20,20,29,30,30,30,30,30,30,30,30,31,20,20,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0
+16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,
+16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,
+16,16,16,1,2,2,2,2,2,2,2,2,2,2,2,2,3,16,16,16,
+16,16,16,15,4,10,5,5,25,26,25,26,5,11,12,6,17,16,16,16,
+16,16,16,15,18,19,45,46,19,19,19,19,19,19,19,48,17,16,16,16,
+16,16,16,15,47,19,59,60,19,19,19,19,19,19,19,62,17,16,16,16,
+16,16,16,15,61,19,19,19,27,27,27,27,19,19,19,48,17,16,16,16,
+16,16,16,15,18,19,19,19,41,41,41,41,19,19,19,62,17,16,16,16,
+16,16,16,15,32,33,35,19,19,19,19,19,19,37,33,34,17,16,16,16,
+16,16,16,29,30,57,18,19,19,19,19,19,19,20,58,30,31,16,16,16,
+16,16,16,16,16,15,32,24,33,33,33,33,24,34,17,16,16,16,16,16,
+16,16,16,16,16,29,30,30,30,30,30,30,30,30,31,16,16,16,16,16,
+16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,
+16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,
+16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16
 </data>
  </layer>
  <objectgroup name="objects">
-  <object id="5" gid="115" x="64" y="144" width="16" height="16"/>
-  <object id="6" gid="115" x="80" y="144" width="16" height="16"/>
-  <object id="7" gid="115" x="96" y="144" width="16" height="16"/>
-  <object id="8" gid="115" x="176" y="96" width="16" height="16"/>
-  <object id="9" gid="116" x="35.5" y="68.75" width="38" height="26"/>
- </objectgroup>
- <objectgroup name="_Calque d'objets 1">
-  <object id="1" gid="113" x="88.25" y="77.3333" width="24" height="24"/>
+  <object id="6" name="idle" type="lit" gid="171" x="91" y="92.75" width="38" height="26"/>
+  <object id="8" type="vase" gid="170" x="192" y="160" width="16" height="16"/>
+  <object id="9" type="vase" gid="170" x="112" y="160" width="16" height="16"/>
  </objectgroup>
 </map>

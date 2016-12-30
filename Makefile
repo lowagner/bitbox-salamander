@@ -1,30 +1,46 @@
-NAME=adv
+NAME=miniz
 
-ROOMS= start beach house1 town 
-ROOM_BIN= $(ROOMS:%=rooms/%.room)
-ROOM_LZ4= $(ROOMS:%=rooms/%.room.lz4)
+ROOMS= start town 
 
-GAME_C_FILES = main.c
-GAME_C_OPTS = -DVGAMODE_320
-GAME_BINARY_FILES = $(ROOM_BIN)
+# special "room" : window
+ROOMS+= window
 
-USE_ENGINE=1
+GAME_C_FILES = main.c lz4.c lib/blitter/blitter.c lib/blitter/blitter_tmap.c lib/blitter/blitter_sprites.c resources.c
+# lz4.s : only used bitbox / non emulator
 
-include $(BITBOX)/lib/bitbox.mk
+DEFINES = VGA_MODE=320 VGA_BPP=8
 
-main.c: build/binaries.h
+LZ4= lz4 -9 --no-frame-crc --content-size
+TMX = $(BITBOX)/lib/blitter/scripts/tmx2.py
 
-all: $(ROOM_LZ4) 
-	du -hc rooms/*.room.lz4 
+include $(BITBOX)/kernel/bitbox.mk 
 
-%.room: %.tmx
+main.c: $(ROOMS:%=room_%.h) data.h 
+
+all: data.h rooms.inc
+
+rooms.inc: 
+	echo "// X macros for rooms\n#define ROOM_LIST=\\" > $@	
+	for i in $(ROOMS); do echo "	 X($$i)\\" >> $@ ; done
+	echo >> $@
+
+
+COMPRESSEDFILES = start.tmap start.tset town.tset town.tmap start_lit.spr
+
+
+data.h: $(ROOMS:%=data/%.tmap) data/window.tmap mkdata.py
+	python mkdata.py $$(python -c "import os;print ' '.join('+data/'+c if c in ','.join('$(COMPRESSEDFILES)'.split()) else 'data/'+c for c in os.listdir('data'))") > data.h
+	rm data/*.lz4
+
+room_%.h data/%.tmap: rooms/%.tmx $(TMX)
+	@mkdir -p data
 	$(info -------------------------------------------------)
 	$(info $<)
 	$(info -------------------------------------------------)
-	python2 tmx8.py $< 
+	python2 $(TMX) -o data -mas $< > room_$*.h
 
-%.room.lz4: %.room
-	lz4 $<
+window.h data/window.tmap: window.tmx
+	python2 $(TMX) -o data -ma $< > $*.h
 
 clean::
-	rm -f rooms/*.room rooms/*.room.lz4
+	rm -f $(ROOMS:%=room_%.h) data/* data.bin data.h 
