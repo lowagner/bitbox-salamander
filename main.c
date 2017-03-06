@@ -12,89 +12,133 @@
 
 #include "bitbox.h"
 #include "lib/blitter/blitter.h"
+#include "lib/blitter/mapdefs.h"
 
-void *load_resource( int res_id ); // resources.c
-void resource_init();
+#define TINYMALLOC_IMPLEMENTATION
+#include "lib/resources/tinymalloc.h"
+#undef TINYMALLOC_IMPLEMENTATION
 
-#define TILEMAPS_IMPLEMENTATION
+#define TINYLZ4_IMPLEMENTATION
+#include "lib/resources/tinylz4.h" 
+#undef TINYLZ4_IMPLEMENTATION
+
+#define RES_IMPLEMENTATION
 #include "data.h"
-#include "room_start.h"
+#undef RES_IMPLEMENTATION
 
-#include "room_window.h" // special "room" for window + always-on data
+#include "sprite_hero.h"
+#include "miniz.h"
 
-#define MAX_OBJECTS 16
 
-
+// Runtime 
 struct ExtraObject {
+	const struct SpriteDef *def;
 	object *spr;
+
 	uint8_t frame; // within animation
 	uint8_t state;
 	int8_t vx,vy;	
 };
 
-// reloaded each time 
 struct Room {
-	uint8_t **anims;
-	uint8_t *state2type;
-
+	int id; // current room id
 	int nb_objects;
+	object *tilemap;
+	const struct MapDef *def;
+
 	struct ExtraObject objects[MAX_OBJECTS];
 	uint8_t *tmap;
-	unsigned int tmap_w;
-	
-	void (*room_start)(); // at room start
-	void (*room_collide)(); // collides with tile in room ?
+} room;
+
+
+// room defs. call with room_defs[room.id].start()
+
+#define X(room) extern const struct MapDef map_##room;
+	ALL_ROOMS 
+#undef X
+
+struct RoomDef {
+	const struct MapDef *def;
+	void (*start)();
+	void (*frame)();
+	void (*collide)();
+	void (*done)();
 };
 
-object *tilemap;
-uint8_t *tmap; // to room
-const uint8_t * tile_properties;
-unsigned int tmap_w;
+const struct RoomDef room_defs[] = {
+#define X(room) {&map_##room, room##_enter ,room##_frame, room##_exit},
+	ALL_ROOMS
+#undef X
+};
 
-int nb_objects;
-struct ExtraObject objects[start_objects_nb]; // in sync with preceding (should merge and put fr to line directly ?... )
+
+// const uint8_t * tile_properties; // ?? terrains ! 
 struct ExtraObject player;
+
+
+#define MEM_SIZE (80*1024)
+char RAM[MEM_SIZE];
+
+
+void room_load(int room_id)
+{
+	const struct MapDef *def = room_defs[room_id].def; // shortcut
+
+	room.id = room_id;
+	room.def = def;
+	
+	room.nb_objects = def->nb_objects;
+
+	room.tilemap = tilemap_new(
+		load_resource(def->tileset),
+		0,0,
+		TMAP_HEADER(def->tilemap_w,def->tilemap_h,def->tilesize,TMAP_U8) | TSET_8bit,
+		load_resource(def->tilemap)
+		);
+	
+	// load sprites from level
+
+	void *spr_data[def->nb_sprites]; // define dyn array on stack
+	for (int i=0; i<def->nb_sprites; i++) {
+		spr_data[i]=load_resource(def->sprites[i]->sprfile); 
+	}
+	
+	// create objects
+	for (int i=0;i<def->nb_objects;i++) {
+
+		const struct MapObjectDef *mo = &def->objects[i];
+		// load sprite as needed, mor are 
+
+		struct ExtraObject *o = &room.objects[i];
+
+		o->def = def->sprites[i];
+		o->vx=0; 
+		o->vy=0;	
+		o->frame=0;  
+		o->state=mo->state_id;
+
+		o->spr = sprite_new(spr_data[i],mo->x,mo->y,0);
+	}
+
+	// room callback
+	room_defs[room_id].start();
+
+}
 
 void game_init()
 {
-	resource_init(); // setup memory map
+	t_addchunk(&RAM, sizeof(RAM));
 
+	window_init(); // load window + hud
 
-	// load window + hud
-	player.spr = sprite_new(load_resource((uintptr_t)data_window_hero_spr),0,0,-1); // direct reference
+	// load map -> structured map file ? set file 
+	room_load(room_start);
 
-
-	// load level	
-	tmap=load_resource(data_start_tmap);
-	const void *tset=load_resource(data_start_tset);
-	tilemap = tilemap_new(tset,0,0,start_header,tmap);
-	tmap_w=TMAP_WIDTH(start_header);
-	tile_properties=tset+start_tset_attrs_offset;
-	
-	// load sprites from level
-	for (int i=0;i<start_t_nb;i++)
-		start_sprites[i]=load_resource((uintptr_t)start_sprites[i]); 
-
-	// create objects/monsters
-	// respawn ? create player separately ?
-	nb_objects=0; 
-	for (int i=0;i<start_objects_nb;i++) {
-		const struct MapObjectRef *mo = &start_objects[i];
-
-		struct ExtraObject *o = &objects[nb_objects++];
-
-		o->vx=0; o->vy=0;	
-		o->frame=1;  
-		o->state=mo->state_id;
-
-		o->spr = sprite_new(start_sprites[start_types[o->state]],mo->x,mo->y,0);
-	}
-
-	// player enters room in given position 
+	// player enters room at given position 
+	player.spr = sprite_new(load_resource(res_hero_spr),0,0,-1); 
 	player.spr->x = 150;
 	player.spr->y = 60;
-
-
+	player.def = &sprite_hero;
 	
 }
 
@@ -103,32 +147,33 @@ void object_set_state(struct ExtraObject *o, int state)
 {
 	if (o->state!=state) {
 		o->state = state;
-		o->frame=1;
+		o->frame=0;
 	}
 }
 
-void anim_frame(struct ExtraObject *eo)
+void object_anim_frame(struct ExtraObject *eo)
 {
-	uint8_t **anims = eo==&player?window_anims:start_anims;
+	const struct StateDef *std = &eo->def->states[eo->state];
+
 	if (vga_frame%8==0) { // animate : 1 frame = 133ms
-		// loop was end of animation.
+		// loop at end of animation.
 		eo->frame += 1;
-		if (eo->frame >= anims[eo->state][0]+1)
-			eo->frame=1;
+		if (eo->frame >= std->nb_frames+1)
+			eo->frame=0;
 	}	
-	eo->spr->fr = anims[eo->state][eo->frame]; 
+	eo->spr->fr = std->frames[eo->frame]; 
 }
 
-void start_object_collide(struct ExtraObject *o)
+void start_object_collide(struct ExtraObject *eo)
 {
-	message("colliding with object state %x type %x\n",o->state, start_types[o->state] );
+	message("colliding with object of type %x in state %x\n",eo->def,eo->state );
 }
 
-
+#if 0
 // http://kishimotostudios.com/articles/aabb_collision/
 void  objects_collisions( void ) 
 {
-	// position tha the player WOULD have
+	// position tha the player WOULD have considering its speed
 
 	const int bx1=player.spr->x+player.vx+window_hitbox[player.state][0];
 	const int by1=player.spr->y+player.vy+window_hitbox[player.state][1];
@@ -170,15 +215,9 @@ static inline uint8_t bg_property_at(int x, int y)
 }
 
 
-
+// reject if bumps into blocking, depending on which part touches, or make it slide sideways
 void start_background_collide(uint8_t a, uint8_t b,uint8_t c, uint8_t d)
 {	
-
-	// reject if bumps into blocking, depending on which part touches, or make it slide sideways
-
-	// react to specials (1-4)
-	// water etc.
-
 	if (a||b||c||d) 
 		message ("collision %02x %02x %02x %02x\n",a,b,c,d);
 
@@ -221,10 +260,9 @@ void start_background_collide(uint8_t a, uint8_t b,uint8_t c, uint8_t d)
 			player.vy-=1;
 		}
 	} 
-
-
 }
 
+#endif 
 
 void game_frame()
 {
@@ -239,28 +277,28 @@ void game_frame()
 	// update player from controls
 	if ( GAMEPAD_PRESSED(0,left) ) {
 		player.vx=-1;
-		object_set_state(&player,window_st_hero_walk_l);
+		object_set_state(&player,state_hero_walk_l);
 	} else if ( GAMEPAD_PRESSED(0,right) ) {
 		player.vx=1;
-		object_set_state(&player,window_st_hero_walk_r);
+		object_set_state(&player,state_hero_walk_r);
 	} else {
 		player.vx=0;
 	}
 
 	if ( GAMEPAD_PRESSED(0,up)) {
 		player.vy =-1;
-		object_set_state(&player,window_st_hero_walk_up);
+		object_set_state(&player,state_hero_walk_up);
 	} else if ( GAMEPAD_PRESSED(0,down) ) {
 		player.vy = 1;
-		object_set_state(&player,window_st_hero_walk_d);
+		object_set_state(&player,state_hero_walk_dn);
 	} else {
 		player.vy=0;
 	}
 
-	// idle states ?
+	// idle states after timer ?
 
-	// -- Collisions 
-
+	#if 0
+	// -- Collision of objects with player
 	objects_collisions();
 
 	// tilemap 
@@ -270,22 +308,23 @@ void game_frame()
 		bg_property_at (player.spr->x + window_hitbox[player.state][0],player.spr->y + window_hitbox[player.state][3]),
 		bg_property_at (player.spr->x + window_hitbox[player.state][2],player.spr->y + window_hitbox[player.state][3])
 		);
+	#endif 
 
 	// -- Update positions / animations
-	for (int i=0;i<nb_objects;i++) {
+	for (int i=0;i<room.nb_objects;i++) {
 		
-		struct ExtraObject *eo=&objects[i];
+		struct ExtraObject *eo=&room.objects[i];
 		
 		eo->spr->x += eo->vx;
 		eo->spr->y += eo->vy;
-
-		//anim_frame(eo);
+		object_anim_frame(eo);
 	}
 
 	
 	player.spr->x += player.vx;
 	player.spr->y += player.vy;
+	object_anim_frame(&player);
 
-	anim_frame(&player);
-
+	// room callback
+	room_defs[room.id].frame();
 }

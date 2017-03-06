@@ -1,0 +1,12 @@
+build/
+data/
+*.elf
+*.bin
+data.h
+_*/
+*_sdl 
+
+map_*.h
+sprite_*.h
+
+rooms/_*/

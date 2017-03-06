@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="116" height="80" tilewidth="16" tileheight="16" nextobjectid="43">
- <tileset firstgid="1" name="tilemap" tilewidth="16" tileheight="16" tilecount="208" columns="16">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="80" height="80" tilewidth="16" tileheight="16" nextobjectid="51">
+ <tileset firstgid="1" name="town" tilewidth="16" tileheight="16" tilecount="208" columns="16">
   <image source="town16.png" width="256" height="208"/>
   <terraintypes>
    <terrain name="block" tile="-1"/>
@@ -186,44 +186,40 @@
   <tile id="203" terrain="0,0,,"/>
   <tile id="204" terrain="0,,,"/>
  </tileset>
- <tileset firstgid="209" name="guard_25x24" tilewidth="25" tileheight="24" tilecount="2" columns="2">
-  <image source="guard_25x24.png" width="50" height="24"/>
-  <tile id="0">
-   <animation>
-    <frame tileid="0" duration="500"/>
-    <frame tileid="1" duration="500"/>
-   </animation>
-  </tile>
- </tileset>
- <tileset firstgid="211" name="town_tops" tilewidth="48" tileheight="16" tilecount="9" columns="1">
-  <image source="town_tops.png" trans="ff00da" width="48" height="144"/>
- </tileset>
- <layer name="layer" width="116" height="80">
+ <tileset firstgid="209" source="guard.tsx"/>
+ <tileset firstgid="211" source="town_tops.tsx"/>
+ <layer name="layer" width="80" height="80">
   <data encoding="base64" compression="zlib">
-   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
+   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
   </data>
  </layer>
  <objectgroup name="objects">
   <object id="1" name="idle" type="guard" gid="209" x="155.25" y="699.667" width="25" height="24"/>
   <object id="2" name="idle" type="guard" gid="209" x="179.25" y="692.917" width="25" height="24"/>
-  <object id="16" name="tops" type="tree" gid="211" x="488" y="144" width="48" height="16"/>
-  <object id="17" name="tops" type="tree" gid="211" x="890" y="320" width="48" height="16"/>
-  <object id="18" name="tops" type="tree" gid="211" x="88" y="80" width="48" height="16"/>
-  <object id="21" name="tops" type="house_green_l" gid="212" x="320" y="336" width="48" height="16"/>
-  <object id="22" name="tops" type="house_green_r" gid="213" x="352" y="336" width="48" height="16"/>
-  <object id="23" name="tops" type="tree" gid="211" x="617" y="64" width="48" height="16"/>
-  <object id="24" name="tops" type="tree" gid="211" x="889" y="64" width="48" height="16"/>
-  <object id="25" name="tops" type="tree" gid="211" x="808" y="368" width="48" height="16"/>
-  <object id="26" name="tops" type="tree" gid="211" x="1017" y="160" width="48" height="16"/>
-  <object id="27" name="tops" type="tree" gid="211" x="584" y="80" width="48" height="16"/>
-  <object id="28" name="tops" type="tree" gid="211" x="648" y="80" width="48" height="16"/>
-  <object id="29" name="tops" type="stone1" gid="214" x="353" y="224" width="48" height="16"/>
-  <object id="31" name="tops" type="stone2" gid="215" x="497" y="224" width="48" height="16"/>
-  <object id="32" name="tops" type="stone3" gid="215" x="302" y="849" width="48" height="16"/>
-  <object id="37" name="tops" type="house_blue_l" gid="216" x="693" y="502" width="48" height="16"/>
-  <object id="38" name="tops" type="house_blue_r" gid="217" x="731" y="500" width="48" height="16"/>
-  <object id="39" name="tops" type="house_blue_l" gid="216" x="149" y="502" width="48" height="16"/>
-  <object id="40" name="tops" type="house_blue_r" gid="217" x="219" y="500" width="48" height="16"/>
-  <object id="41" name="tops" type="house_blue_mid" gid="218" x="176" y="502" width="48" height="16"/>
+  <object id="16" name="tree" type="tops" gid="211" x="488" y="144" width="48" height="16"/>
+  <object id="17" name="tree" type="tops" gid="211" x="890" y="320" width="48" height="16"/>
+  <object id="18" name="tree" type="tops" gid="211" x="88" y="80" width="48" height="16"/>
+  <object id="21" name="house_green_l" type="tops" gid="212" x="320" y="336" width="48" height="16"/>
+  <object id="22" name="house_green_r" type="tops" gid="213" x="352" y="336" width="48" height="16"/>
+  <object id="23" name="tree" type="tops" gid="211" x="617" y="64" width="48" height="16"/>
+  <object id="24" name="tree" type="tops" gid="211" x="889" y="64" width="48" height="16"/>
+  <object id="25" name="tree" type="tops" gid="211" x="808" y="368" width="48" height="16"/>
+  <object id="26" name="tree" type="tops" gid="211" x="1017" y="160" width="48" height="16"/>
+  <object id="27" name="tree" type="tops" gid="211" x="584" y="80" width="48" height="16"/>
+  <object id="28" name="tree" type="tops" gid="211" x="648" y="80" width="48" height="16"/>
+  <object id="29" name="stone1" type="tops" gid="214" x="353" y="224" width="48" height="16"/>
+  <object id="31" name="stone2" type="tops" gid="215" x="497" y="224" width="48" height="16"/>
+  <object id="32" name="stone2" type="tops" gid="215" x="302" y="849" width="48" height="16"/>
+  <object id="37" name="house_blue_l" type="tops" gid="216" x="693" y="502" width="48" height="16"/>
+  <object id="38" name="house_blue_r" type="tops" gid="217" x="731" y="500" width="48" height="16"/>
+  <object id="39" name="house_blue_l" type="tops" gid="216" x="149" y="502" width="48" height="16"/>
+  <object id="40" name="house_blue_r" type="tops" gid="217" x="219" y="500" width="48" height="16"/>
+  <object id="41" name="house_blue_mid" type="tops" gid="218" x="176" y="502" width="48" height="16"/>
+  <object id="43" name="exit_sout" x="147" y="820" width="143" height="42"/>
+  <object id="46" name="door1" x="188.833" y="586.667" width="22" height="20"/>
+  <object id="47" name="door2" x="348.667" y="425.333" width="22" height="20"/>
+  <object id="48" name="door3" x="477" y="424" width="22" height="20"/>
+  <object id="49" name="door4" x="332" y="664" width="22" height="20"/>
+  <object id="50" name="tree" type="tops" gid="211" x="312" y="67" width="48" height="16"/>
  </objectgroup>
 </map>
