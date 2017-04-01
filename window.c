@@ -1,18 +1,17 @@
 // window : 2 tilesets left & right, 2ptrs + 1 limit left/right, 1 unique vram 
 //#include <bitbox.h>
 
+#include "string.h"
+
 #include "lib/blitter/blitter.h"
 
 #define MAPS_IMPLEMENTATION
-#include "map_window.h" // special "room" for window + always-on data
+#include "map_window.h" 
 
-#include "data.h"
+#include "miniz.h"
 
-#include "string.h"
-
-static uint8_t vram[32][16];
+static uint8_t vram[16][40];
 static object *window;
-static int window_y;
 
 #define HUD_HEIGHT 4
 
@@ -21,37 +20,53 @@ void window_init()
 	window = tilemap_new(
 		load_resource(map_window.tileset), 
 		0,0,
-		TMAP_HEADER(map_window.tilemap_w,map_window.tilemap_h,map_window.tilesize,TMAP_U8),
+		TMAP_HEADER(40,16,map_window.tilesize==8?TSET_8:TSET_16,TMAP_U8) | TSET_8bit,
 		vram
 	);
+	window->x = (VGA_H_PIXELS-window->w)/2;
+	window->z = -10; // set front 
+	window->y=-window->h; // hide up
+
+	window_draw_hud();
 }
 
 int wait_joy_pressed() // wait for new joystick button pressed, send it.
 {
-	uint16_t prev_buttons=gamepad_buttons[0];
+	// wait for release first 
+	while (gamepad_buttons[0]);
 
+	message("%d %x\n",vga_frame, gamepad_buttons[0]);
+
+	uint16_t prev_buttons=gamepad_buttons[0];
 	while (1) {
 		uint16_t but = gamepad_buttons[0];
-		int pressed = (but & ~prev_buttons); // 1+lsb pos or zero
-		if (pressed) 
-			return __builtin_ffs(pressed-1);
-		prev_buttons = but;
+		uint16_t pressed = (but & ~prev_buttons); // 1+lsb pos or zero
 
-		vsync_wait(1);
+		if (pressed) 
+			return pressed;
+
+		prev_buttons = but;
+		wait_vsync(1);
 	}
 }
 
 // linear movement to target
 void window_set(int y_target) 
 {
-	while (window_y != y_target) {
-		window_y += window_y>y_target ? -1 : 1;
-		vsync_wait(1);
+	while (window->h+window->y != y_target) {
+		if (window->h+window->y < y_target)
+			window->y += 2;
+		else 
+			window->y -= 2;
+		wait_vsync(1);
 	}
 }
 
 void window_draw_hud() // (re)draw hud
 {
+	memset(vram, 0,40*16); 
+	tmap_blitlayer(window, 0,12,window->b,data_window_tmap,layer_window_hud);
+	window_set(4*8);
 }
 
 // XXX faces as left window blocks : load tileset, display it, unload at end. 
@@ -61,41 +76,76 @@ void window_draw_hud() // (re)draw hud
 // answers: \n separated different answers, NULL : this is a message. 
 int window_dialog (int face_id, char *msg, char *answers)
 {
-	int nlines=0;
+
+	message("Dialog: \n");
+	message("message=%s\n",msg);
+	message("answers=%s\n",answers);
+
 	int pos=0; // horizontal position
-	int choice=0;
+	int choice=0; // current choice
 
-	window_set(0); // hide window
-
-	// display message
-	memset(vram, sizeof(vram), ' '); 
-	for (char *p=msg; *p; p++) {
-		if (*p=='\n') {
-			nlines++; pos=0;
-		} else {
-			vram[nlines][pos++] = *p;
-		}
+	// draw window
+	memset(vram, ' '+1,40*16); // one-based 
+	for (int i=2;i<40;i++) {
+		vram[7] [i]=162;
+		vram[15][i]=178;		
 	}
+	for (int i=7;i<15;i++) {
+		vram[i][2] =164;
+		vram[i][39]=165;	
+		vram[i+1][0]=vram[i+1][1]=208 ;// black;	
+	}
+	// singles
+	vram[ 7][ 2] = 161; // corners 
+	vram[15][ 2] = 177; 
+	vram[ 7][39] = 163;
+	vram[15][39] = 179;
+	vram[12][ 1] = 182; // speak
+	vram[12][ 2] = 33; 
+
+	// display face
+	for (int i=0;i<2;i++)
+		for (int j=0;j<2;j++)
+			vram[7+i][j] = data_window_tmap[(layer_window_faces*16+(face_id>>4)*2+i)*40+j+(face_id&0xf)*2];
+
+	window_set(9*8);
+
+	int nlines=0;
+	// display message
+	if (msg) {
+		pos=3;
+		for (char *p=msg; *p; p++) {
+			if (*p=='\n' || pos==39) {
+				nlines++; pos=3;
+			} else {
+				vram[8+nlines][pos++] = *p+1;
+			}
+			wait_vsync(4); // faster if button pressed
+		}
+		nlines += 2;
+	}
+
+
 
 	if (answers) { 
 		// display answers
 		int nchoices=0;
-		pos=2;
+		pos=4;
 		for (char *p=answers; *p; p++) {
 			if (*p=='\n') {
 				nchoices++;
-				pos=2;
+				pos=4;
 			} else {
-				vram[nlines+nchoices][pos++] = *p;
+				vram[8+nlines+nchoices][pos++] = *p+1;
 			}
 		}
 
-		window_set((nlines+nchoices)*8);
 
 		// select, display cursor
+		vram[8+nlines+choice][3] = 32; // right arrow (XXX blink?)
 		while(1) {
-			int btn = wait_joy_pressed();
-			vram[nlines+choice][0] = ' ';
+			uint16_t btn = wait_joy_pressed();
+			vram[8+nlines+choice][3] = ' '+1;
 			switch (btn) {
 				case gamepad_down : 
 					if (choice >= nchoices) 
@@ -113,18 +163,13 @@ int window_dialog (int face_id, char *msg, char *answers)
 					goto end;
 					break;
 			}
-			vram[nlines+choice][0] = '*';
+			vram[8+nlines+choice][3] = 32; // right arrow (XXX blink?)
 		}
 	} else { // !answers
-		window_set(nlines*8);
 		while (wait_joy_pressed() != gamepad_A);
 		goto end;
 	}
 
 end: 
-	window_set(0);
-	window_set(HUD_HEIGHT);
-	window_draw_hud();
-
 	return choice;
 }

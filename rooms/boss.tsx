@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tileset name="boss" tilewidth="64" tileheight="72" tilecount="60" columns="6">
- <image source="old/boss_6x10.png" width="384" height="720"/>
+ <image source="boss.png" width="384" height="720"/>
  <tile id="0">
   <properties>
    <property name="state" value="attack_r"/>

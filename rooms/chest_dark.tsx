@@ -5,10 +5,16 @@
   <properties>
    <property name="state" value="open"/>
   </properties>
+  <objectgroup draworder="index">
+   <object id="1" x="0" y="0" width="16" height="16"/>
+  </objectgroup>
  </tile>
  <tile id="1">
   <properties>
    <property name="state" value="closed"/>
   </properties>
+  <objectgroup draworder="index">
+   <object id="1" x="0" y="0" width="16" height="16"/>
+  </objectgroup>
  </tile>
 </tileset>

@@ -1,4 +1,5 @@
 #include "map_forest.h"
+#include "miniz.h"
 
 /*
 =====================================================
@@ -65,3 +66,15 @@ int dlg_bluff() {
 	}
 
 }
+
+uint8_t forest_background_collide(uint8_t bgtype)
+{
+	return bgtype;
+}
+
+
+uint8_t forest_object_collide(const struct ExtraObject *eo)
+{
+	return col_block;
+}
+
