@@ -16,7 +16,7 @@
    <property name="state" value="walk_r"/>
   </properties>
   <objectgroup draworder="index">
-   <object id="1" x="10.625" y="17.5" width="11.375" height="7.28409"/>
+   <object id="1" x="13" y="17" width="7" height="9"/>
   </objectgroup>
   <animation>
    <frame tileid="5" duration="100"/>
@@ -29,9 +29,24 @@
   <properties>
    <property name="state" value="idle_r"/>
   </properties>
+  <objectgroup draworder="index">
+   <object id="1" x="12" y="18" width="8" height="7"/>
+  </objectgroup>
   <animation>
    <frame tileid="5" duration="100"/>
-   <frame tileid="11" duration="300"/>
+   <frame tileid="11" duration="100"/>
+   <frame tileid="5" duration="100"/>
+   <frame tileid="5" duration="100"/>
+   <frame tileid="5" duration="100"/>
+  </animation>
+ </tile>
+ <tile id="13">
+  <properties>
+   <property name="state" value="pull_r"/>
+  </properties>
+  <animation>
+   <frame tileid="13" duration="100"/>
+   <frame tileid="14" duration="100"/>
   </animation>
  </tile>
  <tile id="15">
@@ -49,7 +64,7 @@
    <property name="state" value="walk_up"/>
   </properties>
   <objectgroup draworder="index">
-   <object id="1" x="10.25" y="16.4659" width="11.75" height="9.53409"/>
+   <object id="1" x="12" y="16.4659" width="8" height="8.5341"/>
   </objectgroup>
   <animation>
    <frame tileid="20" duration="250"/>
@@ -62,9 +77,26 @@
   <properties>
    <property name="state" value="idle_up"/>
   </properties>
+  <objectgroup draworder="index">
+   <object id="1" x="13" y="19" width="6" height="7"/>
+  </objectgroup>
   <animation>
-   <frame tileid="20" duration="100"/>
    <frame tileid="26" duration="100"/>
+   <frame tileid="26" duration="100"/>
+   <frame tileid="26" duration="100"/>
+   <frame tileid="26" duration="100"/>
+   <frame tileid="20" duration="100"/>
+  </animation>
+ </tile>
+ <tile id="27">
+  <properties>
+   <property name="state" value="pull_up"/>
+  </properties>
+  <animation>
+   <frame tileid="26" duration="100"/>
+   <frame tileid="26" duration="100"/>
+   <frame tileid="27" duration="100"/>
+   <frame tileid="27" duration="100"/>
   </animation>
  </tile>
  <tile id="30">
@@ -82,7 +114,7 @@
    <property name="state" value="walk_dn"/>
   </properties>
   <objectgroup draworder="index">
-   <object id="1" x="10.125" y="16.6932" width="11.75" height="8.92045"/>
+   <object id="1" x="12" y="16.6932" width="8" height="8.92045"/>
   </objectgroup>
   <animation>
    <frame tileid="35" duration="250"/>
@@ -96,58 +128,79 @@
    <property name="state" value="idle_dn"/>
   </properties>
   <objectgroup draworder="index">
-   <object id="1" x="9.875" y="16.75" width="12.25" height="10.5"/>
+   <object id="1" x="12" y="17" width="8" height="10"/>
   </objectgroup>
   <animation>
-   <frame tileid="35" duration="250"/>
-   <frame tileid="41" duration="250"/>
-   <frame tileid="41" duration="250"/>
-   <frame tileid="41" duration="250"/>
+   <frame tileid="35" duration="133"/>
+   <frame tileid="41" duration="133"/>
+   <frame tileid="41" duration="133"/>
+   <frame tileid="41" duration="133"/>
+  </animation>
+ </tile>
+ <tile id="43">
+  <properties>
+   <property name="state" value="pull_dn"/>
+  </properties>
+  <animation>
+   <frame tileid="43" duration="100"/>
+   <frame tileid="43" duration="100"/>
+   <frame tileid="41" duration="100"/>
+   <frame tileid="41" duration="100"/>
   </animation>
  </tile>
  <tile id="45">
-  <properties>
-   <property name="state" value="walk_l"/>
-  </properties>
   <objectgroup draworder="index">
    <object id="1" x="10.75" y="15.125" width="10.375" height="11.375"/>
   </objectgroup>
-  <animation>
-   <frame tileid="45" duration="100"/>
-   <frame tileid="46" duration="100"/>
-   <frame tileid="45" duration="100"/>
-   <frame tileid="48" duration="100"/>
-  </animation>
  </tile>
  <tile id="50">
   <properties>
-   <property name="state" value="pull_l"/>
+   <property name="state" value="attack_l"/>
   </properties>
   <objectgroup draworder="index">
-   <object id="1" x="9.125" y="17.875" width="11.125" height="10.5"/>
+   <object id="1" x="9" y="16" width="11.125" height="10.5"/>
   </objectgroup>
   <animation>
-   <frame tileid="50" duration="250"/>
-   <frame tileid="51" duration="250"/>
+   <frame tileid="50" duration="100"/>
+   <frame tileid="51" duration="100"/>
+   <frame tileid="54" duration="100"/>
   </animation>
  </tile>
  <tile id="55">
   <properties>
-   <property name="state" value="attack_l"/>
+   <property name="state" value="walk_l"/>
   </properties>
+  <objectgroup draworder="index">
+   <object id="1" x="12" y="18" width="7" height="6"/>
+  </objectgroup>
   <animation>
    <frame tileid="55" duration="100"/>
    <frame tileid="56" duration="100"/>
-   <frame tileid="59" duration="100"/>
+   <frame tileid="55" duration="100"/>
+   <frame tileid="58" duration="100"/>
   </animation>
  </tile>
  <tile id="60">
   <properties>
    <property name="state" value="idle_l"/>
   </properties>
+  <objectgroup draworder="index">
+   <object id="1" x="12" y="18" width="8" height="6"/>
+  </objectgroup>
   <animation>
-   <frame tileid="45" duration="100"/>
+   <frame tileid="55" duration="100"/>
+   <frame tileid="55" duration="100"/>
+   <frame tileid="55" duration="100"/>
    <frame tileid="61" duration="100"/>
+  </animation>
+ </tile>
+ <tile id="65">
+  <properties>
+   <property name="state" value="pull_l"/>
+  </properties>
+  <animation>
+   <frame tileid="65" duration="100"/>
+   <frame tileid="66" duration="100"/>
   </animation>
  </tile>
 </tileset>

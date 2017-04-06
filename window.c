@@ -13,7 +13,6 @@
 static uint8_t vram[16][40];
 static object *window;
 
-#define HUD_HEIGHT 4
 
 void window_init() 
 {
@@ -27,7 +26,6 @@ void window_init()
 	window->z = -10; // set front 
 	window->y=-window->h; // hide up
 
-	window_draw_hud();
 }
 
 int wait_joy_pressed() // wait for new joystick button pressed, send it.
@@ -35,10 +33,13 @@ int wait_joy_pressed() // wait for new joystick button pressed, send it.
 	// wait for release first 
 	while (gamepad_buttons[0]);
 
-	message("%d %x\n",vga_frame, gamepad_buttons[0]);
-
 	uint16_t prev_buttons=gamepad_buttons[0];
 	while (1) {
+		if ( gamepad_y[0] < -50 ) gamepad_buttons[0] |= gamepad_up;
+		if ( gamepad_y[0] >  50 ) gamepad_buttons[0] |= gamepad_down;
+		if ( gamepad_x[0] < -50 ) gamepad_buttons[0] |= gamepad_left;
+		if ( gamepad_x[0] >  50 ) gamepad_buttons[0] |= gamepad_right;
+
 		uint16_t but = gamepad_buttons[0];
 		uint16_t pressed = (but & ~prev_buttons); // 1+lsb pos or zero
 
@@ -74,12 +75,8 @@ void window_draw_hud() // (re)draw hud
 // face_id : 0 if none
 // msg : \n separated multiline message.
 // answers: \n separated different answers, NULL : this is a message. 
-int window_dialog (int face_id, char *msg, char *answers)
+int window_dialog (const int face_id,const char *msg,const char *answers)
 {
-
-	message("Dialog: \n");
-	message("message=%s\n",msg);
-	message("answers=%s\n",answers);
 
 	int pos=0; // horizontal position
 	int choice=0; // current choice
@@ -114,13 +111,13 @@ int window_dialog (int face_id, char *msg, char *answers)
 	// display message
 	if (msg) {
 		pos=3;
-		for (char *p=msg; *p; p++) {
+		for (const char *p=msg; *p; p++) {
 			if (*p=='\n' || pos==39) {
 				nlines++; pos=3;
 			} else {
 				vram[8+nlines][pos++] = *p+1;
 			}
-			wait_vsync(4); // faster if button pressed
+			wait_vsync(MESSAGE_SPEED); // faster if button pressed
 		}
 		nlines += 2;
 	}
@@ -131,7 +128,7 @@ int window_dialog (int face_id, char *msg, char *answers)
 		// display answers
 		int nchoices=0;
 		pos=4;
-		for (char *p=answers; *p; p++) {
+		for (const char *p=answers; *p; p++) {
 			if (*p=='\n') {
 				nchoices++;
 				pos=4;

@@ -13,9 +13,10 @@
 #include "data.h"
 #undef DATA_IMPLEMENTATION
 
-#define MAX_COMPRESSED 16 // max nb of compressed objects at once
+#define MAX_COMPRESSED 16 // max nb of decompressed objects at once
 #define MEM_SIZE (80*1024)
 
+// keep track of decompressed files in memory
 static struct {
 	const void *compressed;
 	void *decompressed; 
@@ -56,3 +57,11 @@ void *load_resource(const void *data)
 }
 
 // free it : if compressed, remove from table (or even refcnt--)
+
+void resource_unload_all()
+{
+	for (int i=0;i<nb_compressed;i++) {
+		t_free(comptab[i].decompressed);
+	}
+	nb_compressed=0;
+}

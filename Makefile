@@ -1,6 +1,6 @@
 NAME=miniz
 
-ROOMS:= start town beach bateau
+ROOMS:= start town beach bateau town_nuit
 
 GAME_C_FILES = main.c \
 	lib/blitter/blitter.c \
@@ -27,7 +27,9 @@ build/data.mk: $(ROOMS:%=rooms/%.tmx) window.tmx
 
 main.c: data.h # should be automatic
 
-TOCOMPRESS := start.tmap start.tset town.tset town.tmap bed.spr boss.spr beach.tset bonh.spr beach.tmap bateau.tset bateau.tmap
+TOCOMPRESS :=  start.tset town.tset bateau.tset beach.tset  town_nuit.tset \
+	bed.spr boss.spr bonh.spr \
+	start.tmap beach.tmap town.tmap town_nuit.tmap bateau.tmap
 RAWFILES := $(filter-out $(TOCOMPRESS:%=data/%),$(TMX_DATAFILES))
 
 data/%.lz4: data/%
