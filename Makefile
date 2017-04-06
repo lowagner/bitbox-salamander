@@ -1,4 +1,4 @@
-NAME=miniz
+NAME=sal
 
 ROOMS:= start town beach bateau town_nuit
 
