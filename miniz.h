@@ -80,7 +80,23 @@ struct Room {
 
 	int nb_objects; // can be larger / smaller than def
 	struct ExtraObject objects[MAX_OBJECTS];
+	
+	struct ExtraObject *holds; // pulling / holding. 
+	struct ExtraObject *arm;   // current hold if nothing hold 
+};
 
+struct Status {
+	unsigned life: 5; // shown as half-hearts
+	unsigned avail_life: 5; 
+	unsigned mana: 4;
+	
+	// inventory
+	unsigned blue_potion: 3;
+	unsigned bombs: 5;
+	unsigned arrows: 5;
+	
+	// switches
+	unsigned town_nuit_guard_talked: 2;
 };
 
 extern struct Room room;
