@@ -22,6 +22,7 @@ include $(BITBOX)/kernel/bitbox.mk
 .DELETE_ON_ERROR: build/data.mk
 build/data.mk: $(ROOMS:%=rooms/%.tmx) window.tmx
 	@mkdir -p build
+	@mkdir -p data
 	$(BITBOX)/lib/blitter/scripts/tmx-deps.py $^ > $@
 -include build/data.mk
 
@@ -41,4 +42,5 @@ data.h : $(TOCOMPRESS:%=data/%.lz4) $(RAWFILES)
 	python $(BITBOX)/lib/resources/embed.py $(foreach fn,$(TOCOMPRESS),data/$(fn).lz4:$(subst .,_,$(fn))) $(RAWFILES) > data.h
 
 clean::
-	rm -f $(ROOMS:%=room_%.h) data/* data.h sprite_*.h map_*.h
+	rm -rf $(ROOMS:%=room_%.h) data data.h sprite_*.h map_*.h
+

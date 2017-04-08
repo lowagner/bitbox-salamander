@@ -1,11 +1,13 @@
+//si touche & pullable OU portable (comme block mais plus haute prio, besoin des deux passe en mode pull)
 /* TODO : 
+- nuit: if take, sends back directly
+- pull : 
 
-- collisions tiles a revoir
-- window display : dialogs a revoir
-- pull
+- window display : dialogs a revoir (progressif, borders collide, button skip)
 - porter / arme 
 
-- special cased blitters ? + nonclipped lines
+- special cased blitters ? + nonclipped lines : custom blitter lib
+
 */
 #include "stdbool.h"
 
@@ -112,6 +114,9 @@ void room_load(int room_id, int entry)
 		eo->spr = sprite_new(spr_data,0,0,0);
 	}
 	object_set_state(&player, state_hero_idle_dn);
+	
+	message("RAM left after load : %d bytes\n",t_available());
+
 	// room callback
 	room_defs[room_id].start(entry);
 

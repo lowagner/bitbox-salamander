@@ -3,7 +3,10 @@
 #define MAPS_IMPLEMENTATION
 #include "map_town_nuit.h"
 
-
+static void guard_dialog2()
+{
+	window_dialog (GUARD_ANGRY, "Get back to sleep immediately ! ",0);
+}
 
 // dialogs for town
 static int guard_dialog() 
@@ -52,7 +55,6 @@ static int guard_dialog()
 	}
 
 	window_set(0);
-	window_draw_hud();
 	return ans;
 }
 
@@ -90,12 +92,18 @@ uint8_t town_nuit_background_collide(uint8_t bgtype)
 	return bgtype;
 }
 
-
+static char has_met_guard=0;
 uint8_t town_nuit_object_collide(const struct ExtraObject *eo)
 {
 	switch(eo->type) {
 		case type_town_nuit_guard : 
-			guard_dialog();
+			if (has_met_guard<3) {
+				has_met_guard++;
+				guard_dialog();
+			} else {
+				guard_dialog2();
+			}
+			window_draw_hud();
 			wait_vsync(20);
 			room_load(room_start,0);
 
