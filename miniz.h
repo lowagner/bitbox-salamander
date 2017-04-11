@@ -1,5 +1,8 @@
 #pragma once
+#include <stdbool.h>
 #include "lib/blitter/blitter.h"
+
+#define NULL ((void *)0)
 
 #define ALL_ROOMS \
 	X(beach) \
@@ -7,6 +10,7 @@
 	X(town) \
 	X(bateau) \
 	X(town_nuit) \
+	X(start_underground) \
 
 
 // room defs
@@ -66,12 +70,18 @@ struct ExtraObject {
 
 	int8_t vx,vy;	
 	int16_t x,y; // on-level position 0,0 is the topleft of the map
+
+	// callbacks
+	void    (*update)  (struct ExtraObject *this);  
+	uint8_t (*collide) (struct ExtraObject *this);  // returns a col_type
+
+	Quad data; // extra data 
 };
 
 extern struct ExtraObject player;
 
 
-// current room, in ram
+// room status, in ram
 struct Room {
 	int id; // current room id
 
@@ -81,10 +91,11 @@ struct Room {
 	int nb_objects; // can be larger / smaller than def
 	struct ExtraObject objects[MAX_OBJECTS];
 	
-	struct ExtraObject *holds; // pulling / holding. 
-	struct ExtraObject *arm;   // current hold if nothing hold 
+	struct ExtraObject *hold; // pulling / lifting
+	
 };
 
+// global status (saved)
 struct Status {
 	unsigned life: 5; // shown as half-hearts
 	unsigned avail_life: 5; 
@@ -94,20 +105,26 @@ struct Status {
 	unsigned blue_potion: 3;
 	unsigned bombs: 5;
 	unsigned arrows: 5;
+	unsigned gold: 7;
 	
 	// switches
 	unsigned town_nuit_guard_talked: 2;
+	unsigned start_sub_shown_msg:1;
 };
 
 extern struct Room room;
-
+extern struct Status status; 
 
 // room functions
 void object_set_state(struct ExtraObject *o, int state);
 void objects_collisions( void (*f)(struct ExtraObject *) );
+
+void player_canpull(const struct ExtraObject *eo); // the player can pull this in this frame
 
 void resource_init(void);
 void *load_resource(const void *data);
 void resource_unload_all();
 
 void room_load(int room_id, int entry);
+void bg_scroll(void);
+Quad bg_collide(struct ExtraObject *obj);

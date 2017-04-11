@@ -44,6 +44,9 @@
   <properties>
    <property name="state" value="pull_r"/>
   </properties>
+  <objectgroup draworder="index">
+   <object id="1" x="10" y="18" width="13" height="9"/>
+  </objectgroup>
   <animation>
    <frame tileid="13" duration="100"/>
    <frame tileid="14" duration="100"/>
@@ -92,6 +95,9 @@
   <properties>
    <property name="state" value="pull_up"/>
   </properties>
+  <objectgroup draworder="index">
+   <object id="1" x="10" y="19" width="12" height="7"/>
+  </objectgroup>
   <animation>
    <frame tileid="26" duration="100"/>
    <frame tileid="26" duration="100"/>
@@ -141,6 +147,9 @@
   <properties>
    <property name="state" value="pull_dn"/>
   </properties>
+  <objectgroup draworder="index">
+   <object id="1" x="10" y="18" width="12" height="9"/>
+  </objectgroup>
   <animation>
    <frame tileid="43" duration="100"/>
    <frame tileid="43" duration="100"/>
@@ -198,6 +207,9 @@
   <properties>
    <property name="state" value="pull_l"/>
   </properties>
+  <objectgroup draworder="index">
+   <object id="1" x="6" y="18" width="15" height="10"/>
+  </objectgroup>
   <animation>
    <frame tileid="65" duration="100"/>
    <frame tileid="66" duration="100"/>

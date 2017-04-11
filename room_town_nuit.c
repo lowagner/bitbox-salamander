@@ -58,57 +58,48 @@ static int guard_dialog()
 	return ans;
 }
 
+static char has_met_guard=0;
+static uint8_t guard_nuit_collide(struct ExtraObject *eo)
+{
+	if (has_met_guard<3) {
+		has_met_guard++;
+		guard_dialog();
+	} else {
+		guard_dialog2();
+	}
+	window_draw_hud();
+	wait_vsync(20);
+	room_load(room_start,0);
+
+	return col_block;
+}
+
+inline static int sign(int a) { return (a>0)-(a<0); }
+static void update_guard (struct ExtraObject *this)
+{
+	this->vx = 2*sign( player.x - this->x);
+	this->vy = 2*sign( player.y - this->y);
+}
+
 
 static const uint16_t entries[][2] = {{124,330}};
 void town_nuit_enter(uint8_t entry)
 {
 	player.x = entries[entry][0];
 	player.y = entries[entry][1];
-}
-
-inline static int sign(int a) { return (a>0)-(a<0); }
-
-void town_nuit_frame()
-{
-	// update guard
-	for (int i=0;i<room.nb_objects;i++)
-	{
-		struct ExtraObject *ob = &room.objects[i];
-		if (room.objects[i].type==type_town_nuit_guard) {
-			ob->vx = 2*sign( player.x - ob->x);
-			ob->vy = 2*sign( player.y - ob->y);
+	for (int i=0;i<room.nb_objects;i++) {
+		switch(room.objects[i].type) {
+			case type_town_nuit_guard : 
+				room.objects[i].update = update_guard;
+				room.objects[i].collide = guard_nuit_collide;
 			break;
 		}
 	}
-
-}
-void town_nuit_exit()
-{
-	
 }
 
+void town_nuit_frame() {}
+void town_nuit_exit() {}
 uint8_t town_nuit_background_collide(uint8_t bgtype)
 {
 	return bgtype;
 }
-
-static char has_met_guard=0;
-uint8_t town_nuit_object_collide(const struct ExtraObject *eo)
-{
-	switch(eo->type) {
-		case type_town_nuit_guard : 
-			if (has_met_guard<3) {
-				has_met_guard++;
-				guard_dialog();
-			} else {
-				guard_dialog2();
-			}
-			window_draw_hud();
-			wait_vsync(20);
-			room_load(room_start,0);
-
-		break;
-	}
-	return col_block;
-}
-

@@ -1,13 +1,14 @@
 NAME=sal
 
-ROOMS:= start town beach bateau town_nuit
+ROOMS:= start town beach bateau town_nuit start_underground
 
 GAME_C_FILES = main.c \
 	lib/blitter/blitter.c \
 	lib/blitter/blitter_tmap.c \
 	lib/blitter/blitter_sprites.c \
 	$(ROOMS:%=room_%.c) \
-	resources.c\
+	resources.c \
+	behaviours.c \
 	window.c 
 
 DEFINES = VGA_MODE=320 VGA_BPP=8 NO_AUDIO
@@ -28,9 +29,9 @@ build/data.mk: $(ROOMS:%=rooms/%.tmx) window.tmx
 
 main.c: data.h # should be automatic
 
-TOCOMPRESS :=  start.tset town.tset bateau.tset beach.tset  town_nuit.tset \
-	bed.spr boss.spr bonh.spr \
-	start.tmap beach.tmap town.tmap town_nuit.tmap bateau.tmap
+TOCOMPRESS :=  start.tset town.tset bateau.tset beach.tset town_nuit.tset start_underground.tset\
+	bed.spr boss.spr bonh.spr rat.spr \
+	start.tmap beach.tmap town.tmap town_nuit.tmap bateau.tmap start_underground.tmap
 RAWFILES := $(filter-out $(TOCOMPRESS:%=data/%),$(TMX_DATAFILES))
 
 data/%.lz4: data/%

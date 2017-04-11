@@ -1,11 +1,11 @@
 //si touche & pullable OU portable (comme block mais plus haute prio, besoin des deux passe en mode pull)
 /* TODO : 
-- nuit: if take, sends back directly
-- pull : 
 
 - window display : dialogs a revoir (progressif, borders collide, button skip)
-- porter / arme 
-
+- hud
+- unify room / state ?
+- porter 
+- shared tilesets
 - special cased blitters ? + nonclipped lines : custom blitter lib
 
 */
@@ -30,7 +30,6 @@ struct RoomDef {
 	const struct MapDef *def;
 	void (*start)(uint8_t );
 	void (*frame)();
-	uint8_t (*obj_col)(const struct ExtraObject *eo);
 	uint8_t (*bg_col)(uint8_t);
 	void (*exit)();
 };
@@ -39,7 +38,6 @@ struct RoomDef {
 #define X(room) \
   void room##_enter(uint8_t);\
   void room##_frame();\
-  uint8_t room##_object_collide(const struct ExtraObject *eo);\
   uint8_t room##_background_collide(uint8_t);\
   void room##_exit();
 
@@ -51,7 +49,6 @@ const struct RoomDef room_defs[] = {
 	&map_##room,\
 	room##_enter,\
 	room##_frame,\
-	room##_object_collide,\
 	room##_background_collide,\
 	room##_exit,\
 	},
@@ -60,6 +57,7 @@ const struct RoomDef room_defs[] = {
 };
 
 struct Room room;
+struct Status status;
 
 
 // const uint8_t * tile_properties; // ?? terrains ! 
@@ -69,11 +67,14 @@ struct ExtraObject player;
 void room_load(int room_id, int entry)
 {
 	// unload preceding room data
-	if (room.background) {	
+	if (room.background) {	// there was a previous room
 		room_defs[room_id].exit();
 
-		for (int i=0;i<room.nb_objects;i++)
+		for (int i=0;i<room.nb_objects;i++) {
 			blitter_remove(room.objects[i].spr);
+			room.objects[i].update = NULL;
+			room.objects[i].collide = NULL;
+		}
 		room.nb_objects=0;
 		blitter_remove(room.background);
 		resource_unload_all();
@@ -112,6 +113,7 @@ void room_load(int room_id, int entry)
 		eo->type = mo->type;
 		void *spr_data = load_resource(mo->sprite->file); // load *or reference it if already loaded*
 		eo->spr = sprite_new(spr_data,0,0,0);
+		// XXX callbacks
 	}
 	object_set_state(&player, state_hero_idle_dn);
 	
@@ -165,6 +167,28 @@ static inline uint8_t bg_property_at(int x, int y)
 	}
 }
 
+void bg_scroll(void)
+{
+	// if possible put player in center of bg
+
+	// move viewport to entry position so that player.x = 160 player.y=120
+	room.background->x = -player.x+VGA_H_PIXELS/2;
+	room.background->y = -player.y+VGA_V_PIXELS/2;
+
+	// hit borders
+	if (room.background->x>0)
+		room.background->x=0;
+
+	if (room.background->y>0)
+		room.background->y=0;
+
+	if (room.background->x+room.background->w < VGA_H_PIXELS)
+		room.background->x=VGA_H_PIXELS-room.background->w;
+
+	if (room.background->y+room.background->h < VGA_V_PIXELS)
+		room.background->y=VGA_V_PIXELS-room.background->h;
+
+}
 
 // update object collision state for each corner of the sprite
 Quad bg_collide(struct ExtraObject *eo)
@@ -187,11 +211,11 @@ Quad bg_collide(struct ExtraObject *eo)
 }
 
 
-
-
+// collision between player and objects
 // room transforms the collision type into collision type
-void obj_collide( Quad *q ) 
+void player_obj_collide( Quad *q ) 
 {
+
 	const struct StateDef* def = &player.def->states[player.state];
 	// position that the sprite WOULD have considering its speed
 	const int plx1=player.x+player.vx+def->x1;
@@ -199,11 +223,12 @@ void obj_collide( Quad *q )
 	const int plx2=player.x+player.vx+def->x2;
 	const int ply2=player.y+player.vy+def->y2;
 
-	// collide with each object on map, also updating it
-	uint8_t (*f)(const struct ExtraObject*) = room_defs[room.id].obj_col; // room collision callback
-
 	for (int i=0;i<room.nb_objects;i++) {
-		const struct ExtraObject *eo = &room.objects[i];
+		struct ExtraObject *eo = &room.objects[i];
+
+		// dont collide with hold item
+		if (eo == room.hold) 
+			continue;
 
 		const struct StateDef *std = &(eo->def->states[eo->state]);
 		// get hit boxes
@@ -216,8 +241,8 @@ void obj_collide( Quad *q )
 		if ((ax1 > plx2) || (ax2 <  plx1) || (ay2 <  ply1) || (ay1 > ply2))
 			continue;
 
-		// do collide
-		uint8_t coltype = f(eo);
+		// callback based/update
+		uint8_t coltype = eo->collide ? eo->collide(eo) : col_block;
 
 		// checks if ABCD. only 2 checks, others are done
 		const int plxm = (plx1+plx2)/2;
@@ -233,47 +258,88 @@ void obj_collide( Quad *q )
 		if (!(ax2<plxm || ay2<plym))
 			if (q->b[3]<coltype) q->b[3]=coltype;
 	}
+
 }
 
+// player states : RUDL x AWIP
+inline bool player_iswalking() { return player.state % 4 == 1;  }
+inline bool player_ispulling() { return player.state % 4 == 3; }
+// keeps orientation
+inline void player_setidle()   { object_set_state(&player,(player.state&~3) | 2 ); }
 
-void player_control(struct ExtraObject *player)
+void player_control_walk(void)
 {
 	// update player from controls
 	if ( GAMEPAD_PRESSED(0,up) || gamepad_y[0] < -50 ) {
-		player->vy =-1;
-		if (!player->vx) 
-			object_set_state(player,state_hero_walk_up);
+		player.vy =-1;
+		if (!player.vx) 
+			object_set_state(&player,state_hero_walk_up);
 	} else if ( GAMEPAD_PRESSED(0,down) || gamepad_y[0] > 50 ) {
-		player->vy = 1;
-		if (!player->vx) 
-			object_set_state(player,state_hero_walk_dn);
+		player.vy = 1;
+		if (!player.vx) 
+			object_set_state(&player,state_hero_walk_dn);
 	} else {
-		player->vy=0;
+		player.vy=0;
 	}
 
 	if ( GAMEPAD_PRESSED(0,left) || gamepad_x[0] < -50 ) {
-		player->vx=-1;
-		if (!player->vy) 
-			object_set_state(player,state_hero_walk_l);
+		player.vx=-1;
+		if (!player.vy) 
+			object_set_state(&player,state_hero_walk_l);
 
 	} else if ( GAMEPAD_PRESSED(0,right) || gamepad_x[0] > 50) {
-		player->vx=1;
-		if (!player->vy) 
-			object_set_state(player,state_hero_walk_r);
+		player.vx=1;
+		if (!player.vy) 
+			object_set_state(&player,state_hero_walk_r);
 	} else {
-		player->vx=0;
+		player.vx=0;
 	}
 
 
 	// rest 
 	if (!gamepad_buttons[0]) {
-		if (player->state % 4 == 1 )
-			object_set_state(player,player->state +1);
+		if (player_iswalking())
+			player_setidle();
 	}
-	// take 
+}
 
-	// idle states after timer ?
 
+void player_control_pull(void)
+{
+	// still pulling ?
+	if (!GAMEPAD_PRESSED(0,B)) {
+		room.hold = NULL;
+		object_set_state(&player, (player.state & ~3) | 2); // idle
+		return;
+	}
+
+	switch(player.state) {
+		case state_hero_pull_r : 
+			if (GAMEPAD_PRESSED(0,left)  || gamepad_x[0] < -50) {
+				if (vga_frame % 8==0) 
+					player.vx = -1; // decimal speed
+			} else {
+				player.vx = 0;
+			}
+		break;
+			
+		case state_hero_pull_l : 
+			if (GAMEPAD_PRESSED(0,right) || gamepad_x[0] > 50) {
+				if (vga_frame % 8==0) 
+					player.vx = 1;
+			} else {
+				player.vx = 0;
+			}
+		break;
+	}
+}
+
+void player_control(void)
+{
+	if (player_ispulling()) // pulling ?
+		player_control_pull();
+	else 
+		player_control_walk();
 }
 
 // reject if bumps into blocking, depending on which part touches, or make it slide sideways
@@ -321,28 +387,6 @@ void block_object(struct ExtraObject *eo, Quad collision)
 	} 
 }
 
-void scroll_bg(void)
-{
-	// if possible put player in center of bg
-
-	// move viewport to entry position so that player.x = 160 player.y=120
-	room.background->x = -player.x+VGA_H_PIXELS/2;
-	room.background->y = -player.y+VGA_V_PIXELS/2;
-
-	// hit borders
-	if (room.background->x>0)
-		room.background->x=0;
-
-	if (room.background->y>0)
-		room.background->y=0;
-
-	if (room.background->x+room.background->w < VGA_H_PIXELS)
-		room.background->x=VGA_H_PIXELS-room.background->w;
-
-	if (room.background->y+room.background->h < VGA_V_PIXELS)
-		room.background->y=VGA_V_PIXELS-room.background->h;
-
-}
 
 void game_init()
 {
@@ -352,6 +396,8 @@ void game_init()
 	player.spr = sprite_new(load_resource(data_hero_spr),0,0,-1); 
 	player.def = &sprite_hero;
 
+	status.avail_life = status.life = 6;
+
 	room_load(START_ROOM,START_ENTRY);
 	window_draw_hud();
 
@@ -360,42 +406,49 @@ void game_init()
 void game_frame()
 {
 	// -- Inputs 
-	/*
-	static uint16_t prev_buttons;
-	uint16_t pressed_buttons = gamepad_buttons[0] & ~prev_buttons;  // just pressed up
-	uint16_t released_buttons = prev_buttons & ~gamepad_buttons[0]; // just released
-	prev_buttons=gamepad_buttons[0];
-	*/
 
-	player_control(&player); // reads gamepad, updates player vx, vy and control
-	// objects control ?
+	player_control(); // reads gamepad, updates player vx, vy and control
 
 	// now check potential collisions and handle them
 
 	// reads terrain_id of player corners (after movement)
+	uint8_t old_room=room.id;
 	Quad collide = bg_collide (&player); 
+	if (old_room != room.id) return; // if we changed room, skip frame
+
 
 	// player can collide with objects onscreen. update status
-	obj_collide(&collide); 
+	player_obj_collide(&collide); 
 
 	// adjusts current speed according to blocking status of each corner
 	block_object (&player, collide);
 
 	// update objects 
 
+
 	// -- Update positions / animations
 	for (int i=0;i<room.nb_objects;i++) {
 		struct ExtraObject *eo=&room.objects[i];
+		if (eo->update)
+			eo->update(eo);
+
 		eo->x += eo->vx;
 		eo->y += eo->vy;
 		object_anim_frame(eo);
 	}
 	
+	// move hold object 
+	if (room.hold) {
+		room.hold->x += player.vx;
+		room.hold->y += player.vy;
+	}
+
+	// move player
 	player.x += player.vx;
 	player.y += player.vy;
 	object_anim_frame(&player);
 
-	scroll_bg();
+	bg_scroll();
 
 	// room callback
 	room_defs[room.id].frame();
