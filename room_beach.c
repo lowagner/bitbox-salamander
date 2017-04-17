@@ -1,5 +1,4 @@
 #define MAPS_IMPLEMENTATION
-#define SPRITE_IMPLEMENTATION
 #include "map_beach.h"
 
 #include "miniz.h"

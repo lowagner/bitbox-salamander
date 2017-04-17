@@ -2,7 +2,6 @@
 #include "behaviours.h"
 
 #define MAPS_IMPLEMENTATION
-#define SPRITE_IMPLEMENTATION
 
 #include "map_start_underground.h"
 

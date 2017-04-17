@@ -1,5 +1,6 @@
 #include "bitbox.h"
 
+
 #define TINYMALLOC_IMPLEMENTATION
 #include "lib/resources/tinymalloc.h"
 #undef TINYMALLOC_IMPLEMENTATION
@@ -12,6 +13,21 @@
 #define DATA_IMPLEMENTATION
 #include "data.h"
 #undef DATA_IMPLEMENTATION
+
+// implement once sprites
+#define SPRITE_IMPLEMENTATION
+#include "sprite_beach_treetop.h"
+#include "sprite_bed.h"
+#include "sprite_bonh.h"
+#include "sprite_boss.h"
+#include "sprite_crab.h"
+#include "sprite_fireball.h"
+#include "sprite_guard.h"
+#include "sprite_hero.h"
+#include "sprite_items16.h"
+#include "sprite_rat.h"
+#include "sprite_watermonster.h"
+#undef SPRITE_IMPLEMENTATION
 
 #define MAX_COMPRESSED 16 // max nb of decompressed objects at once
 #define MEM_SIZE (80*1024)

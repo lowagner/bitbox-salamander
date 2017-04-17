@@ -3,7 +3,6 @@
 #include "behaviours.h"
 
 #define MAPS_IMPLEMENTATION
-#define SPRITE_IMPLEMENTATION
 #include "map_start.h"
 
 const char *window_msgs[4] = {

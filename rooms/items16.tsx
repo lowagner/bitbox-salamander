@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tileset name="items16" tilewidth="16" tileheight="16" tilecount="16" columns="4">
  <image source="items16.png" trans="ff00da" width="64" height="64"/>
+ <tile id="0">
+  <properties>
+   <property name="state" value="letter"/>
+  </properties>
+ </tile>
  <tile id="4">
   <properties>
    <property name="state" value="vase"/>
@@ -26,6 +31,11 @@
  <tile id="9">
   <properties>
    <property name="state" value="chestnight_closed"/>
+  </properties>
+ </tile>
+ <tile id="10">
+  <properties>
+   <property name="state" value="stick"/>
   </properties>
  </tile>
 </tileset>

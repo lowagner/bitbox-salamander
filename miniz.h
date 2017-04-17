@@ -98,15 +98,15 @@ struct Room {
 // global status (saved)
 struct Status {
 	unsigned life: 5; // shown as half-hearts
-	unsigned avail_life: 5; 
-	unsigned mana: 4;
+	unsigned life_max: 5; 
+	unsigned mana: 3;
 	
 	// inventory
-	unsigned blue_potion: 3;
-	unsigned bombs: 5;
-	unsigned arrows: 5;
 	unsigned gold: 7;
-	
+	unsigned bombs: 5; 
+	unsigned arrows: 5;
+
+	unsigned keys:2;
 	// switches
 	unsigned town_nuit_guard_talked: 2;
 	unsigned start_sub_shown_msg:1;

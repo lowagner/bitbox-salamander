@@ -63,14 +63,89 @@ void window_set(int y_target)
 	}
 }
 
-void window_draw_hud() // (re)draw hud
+static void draw_window(int x1, int y1, int x2, int y2)
 {
-	memset(vram, 0,40*16); 
-	tmap_blitlayer(window, 0,12,window->b,data_window_tmap,layer_window_hud);
-	window_set(4*8);
+	for (int i=x1;i<x2;i++) {
+		vram[y1][i]=162;
+		vram[y2][i]=178;		
+	}
+	for (int i=y1;i<y2;i++) {
+		vram[i][x1] =164;
+		vram[i][x2] =165;
+		for (int j=x1+1; j<x2;j++)
+			vram[i][j] = ' '+1;
+	}
+
+	// singles at corners
+	vram[y1][x1] = 161;
+	vram[y2][x1] = 177; 
+	vram[y1][x2] = 163;
+	vram[y2][x2] = 179;
 }
 
-// XXX faces as left window blocks : load tileset, display it, unload at end. 
+static void draw_dialog(int x1,int y1,int x2,int y2)
+{
+	draw_window(x1+2,y1,x2,y2);
+
+	// black on left
+	for (int i=y1;i<y2;i++)
+		for (int j=0;j<x1;j++)
+			vram[i][j]=208 ; 
+	
+	vram[y1][x1] = 182; // speak
+	vram[y1][x1+1] = 33; 
+}
+
+#define HUD_W 22
+#define HUD_H 3
+
+#define HUD_X ((40-HUD_W)/2)
+#define HUD_Y (15-HUD_H)
+
+void window_draw_hud() // (re)draw hud
+{
+	memset(vram, 0,40*16);
+	// at end
+	draw_window(HUD_X,HUD_Y,HUD_X+HUD_W,HUD_Y+HUD_H);
+
+	// lives 
+	// XXX case > 10 ! 
+	int i;
+	for (i=0;i<status.life/2;i++)
+		vram[HUD_Y+1][HUD_X+14+i] = 146;
+	if (status.life%2) {
+		vram[HUD_Y+1][HUD_X+14+i] = 153;
+		i++;
+	}
+	for (;i<status.life_max/2;i++)
+		vram[HUD_Y+1][HUD_X+14+i] = 156;
+
+	// magic
+	static const uint8_t mana_chars[7][2] = {
+		{206,206},	{206,207},	{206,222},	{206,223},
+		{207,223},	{222,223},	{222,223},
+	};
+
+	vram[HUD_Y+1][HUD_X+21] = mana_chars[status.mana][0];
+	vram[HUD_Y+2][HUD_X+21] = mana_chars[status.mana][1];
+	vram[HUD_Y+3][HUD_X+21] = 205;
+
+	// hud inventory
+	vram[HUD_Y+1][HUD_X+1] = 37; 
+	vram[HUD_Y+2][HUD_X+1] = status.gold >= 10 ? status.gold/10 + 49 : 33; 
+	vram[HUD_Y+2][HUD_X+2] = status.gold%10 + 49; 
+
+	vram[HUD_Y+1][HUD_X+4] = 220; 
+	vram[HUD_Y+2][HUD_X+4] = status.bombs + 49; 
+
+	vram[HUD_Y+1][HUD_X+6] = 204; 
+	vram[HUD_Y+2][HUD_X+6] = status.arrows >= 10 ? status.arrows/10 + 49 : 33; 
+	vram[HUD_Y+2][HUD_X+7] = status.arrows%10 + 49; 
+
+
+	// tmap_blitlayer(window, 0,12,window->b,data_window_tmap,layer_window_hud);
+	window_set(HUD_H*8);
+}
 
 // face_id : 0 if none
 // msg : \n separated multiline message.

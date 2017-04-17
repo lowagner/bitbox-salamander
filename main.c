@@ -396,7 +396,14 @@ void game_init()
 	player.spr = sprite_new(load_resource(data_hero_spr),0,0,-1); 
 	player.def = &sprite_hero;
 
-	status.avail_life = status.life = 6;
+	status.life_max = 6;
+	status.life = 3;
+	status.mana = 1;
+
+	status.gold = 17;
+	status.bombs = 8;
+	status.arrows = 16;
+
 
 	room_load(START_ROOM,START_ENTRY);
 	window_draw_hud();

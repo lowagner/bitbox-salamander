@@ -2,6 +2,64 @@
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="32" height="32" tilewidth="16" tileheight="16" nextobjectid="3">
  <tileset firstgid="1" name="tilemap" tilewidth="16" tileheight="16" tilecount="96" columns="16">
   <image source="town_nuit.png" width="256" height="96"/>
+  <terraintypes>
+   <terrain name="block" tile="-1"/>
+  </terraintypes>
+  <tile id="0" terrain="0,0,0,0"/>
+  <tile id="1" terrain=",,0,0"/>
+  <tile id="2" terrain=",,,0"/>
+  <tile id="3" terrain=",,0,0"/>
+  <tile id="4" terrain=",,0,0"/>
+  <tile id="5" terrain=",,0,0"/>
+  <tile id="6" terrain=",,0,"/>
+  <tile id="16" terrain="0,0,0,0"/>
+  <tile id="17" terrain="0,0,0,0"/>
+  <tile id="18" terrain=",0,,0"/>
+  <tile id="19" terrain="0,0,0,0"/>
+  <tile id="20" terrain="0,0,0,0"/>
+  <tile id="21" terrain="0,0,0,0"/>
+  <tile id="22" terrain="0,,0,"/>
+  <tile id="32" terrain="0,0,0,0"/>
+  <tile id="33" terrain="0,0,0,0"/>
+  <tile id="34" terrain=",0,,0"/>
+  <tile id="35" terrain="0,0,0,0"/>
+  <tile id="36" terrain="0,0,0,0"/>
+  <tile id="48" terrain="0,0,,"/>
+  <tile id="49" terrain="0,0,,"/>
+  <tile id="50" terrain=",0,,0"/>
+  <tile id="51" terrain="0,0,0,0"/>
+  <tile id="64" terrain=",0,,0"/>
+  <tile id="65" terrain="0,0,0,0"/>
+  <tile id="66" terrain="0,,0,"/>
+  <tile id="67" terrain=",0,,0"/>
+  <tile id="68" terrain="0,0,0,0"/>
+  <tile id="69" terrain="0,,0,"/>
+  <tile id="70" terrain=",,,0"/>
+  <tile id="71" terrain=",,0,0"/>
+  <tile id="72" terrain=",,0,"/>
+  <tile id="73" terrain="0,0,0,0"/>
+  <tile id="74" terrain="0,0,0,0"/>
+  <tile id="75" terrain="0,0,0,0"/>
+  <tile id="76" terrain="0,,0,"/>
+  <tile id="77" terrain="0,0,0,0"/>
+  <tile id="78" terrain="0,0,0,0"/>
+  <tile id="79" terrain="0,0,0,0"/>
+  <tile id="80" terrain=",0,,0"/>
+  <tile id="81" terrain="0,0,0,0"/>
+  <tile id="82" terrain="0,,0,"/>
+  <tile id="83" terrain=",0,,"/>
+  <tile id="84" terrain="0,0,,"/>
+  <tile id="85" terrain="0,,,"/>
+  <tile id="86" terrain=",0,,0"/>
+  <tile id="87" terrain="0,0,0,0"/>
+  <tile id="88" terrain="0,,0,"/>
+  <tile id="89" terrain="0,0,0,0"/>
+  <tile id="90" terrain="0,0,0,0"/>
+  <tile id="91" terrain="0,0,0,0"/>
+  <tile id="92" terrain="0,,0,"/>
+  <tile id="93" terrain="0,0,,"/>
+  <tile id="94" terrain="0,0,,"/>
+  <tile id="95" terrain="0,0,,"/>
  </tileset>
  <tileset firstgid="97" source="guard.tsx"/>
  <layer name="layer" width="32" height="32">
