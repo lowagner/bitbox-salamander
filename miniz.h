@@ -2,8 +2,6 @@
 #include <stdbool.h>
 #include "lib/blitter/blitter.h"
 
-#define NULL ((void *)0)
-
 #define ALL_ROOMS \
 	X(beach) \
 	X(start) \
@@ -95,6 +93,17 @@ struct Room {
 	
 };
 
+// all objects
+enum {
+	obj_sword_none,
+	obj_sword_stick,
+	obj_sword_rusted,
+	obj_sword_metal,
+	obj_sword_gold,
+	obj_sword_enchanted,
+	obj_letter,
+};
+
 // global status (saved)
 struct Status {
 	unsigned life: 5; // shown as half-hearts
@@ -105,6 +114,7 @@ struct Status {
 	unsigned gold: 7;
 	unsigned bombs: 5; 
 	unsigned arrows: 5;
+	unsigned sword: 3; // different types, only one at a time. see sword enum
 
 	unsigned keys:2;
 	// switches
@@ -118,6 +128,8 @@ extern struct Status status;
 // room functions
 void object_set_state(struct ExtraObject *o, int state);
 void objects_collisions( void (*f)(struct ExtraObject *) );
+void object_anim_frame(struct ExtraObject *eo);
+void object_transfer(const struct ExtraObject *eo);
 
 void player_canpull(const struct ExtraObject *eo); // the player can pull this in this frame
 

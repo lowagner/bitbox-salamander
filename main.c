@@ -66,21 +66,23 @@ struct ExtraObject player;
 
 void room_load(int room_id, int entry)
 {
-	// unload preceding room data
-	if (room.background) {	// there was a previous room
+	// unload preceding room data if there was a previous room
+	if (room.background) {	
 		room_defs[room_id].exit();
 
 		for (int i=0;i<room.nb_objects;i++) {
 			blitter_remove(room.objects[i].spr);
-			room.objects[i].update = NULL;
-			room.objects[i].collide = NULL;
+			room.objects[i].update = (void *) 0;
+			room.objects[i].collide = (void *) 0;
 		}
 		room.nb_objects=0;
 		blitter_remove(room.background);
 		resource_unload_all();
 	}
+	wait_vsync(1);	// flush old objects ? 
+	// now we only keep window and hero WHICH MUST BE IN FLASH 
 
-	// now load it
+	// now load map 
 	const struct MapDef *def = room_defs[room_id].def; // shortcut
 
 	room.id = room_id;
@@ -109,19 +111,21 @@ void room_load(int room_id, int entry)
 		eo->y = mo->y;
 		eo->frame=0;  
 		eo->state=mo->state_id;
+
 		eo->def = mo->sprite;
 		eo->type = mo->type;
 		void *spr_data = load_resource(mo->sprite->file); // load *or reference it if already loaded*
 		eo->spr = sprite_new(spr_data,0,0,0);
 		// XXX callbacks
 	}
+
 	object_set_state(&player, state_hero_idle_dn);
 	
-	message("RAM left after load : %d bytes\n",t_available());
-
 	// room callback
 	room_defs[room_id].start(entry);
 
+	// now player has right position. position bg and thus sprites.
+	bg_scroll();
 }
 
 
@@ -131,6 +135,15 @@ void object_set_state(struct ExtraObject *o, int state)
 		o->state = state;
 		o->frame=0;
 	}
+}
+
+
+inline void object_transfer(const struct ExtraObject *eo)
+{
+	// transfer to sprite
+	eo->spr->fr = eo->def->states[eo->state].frames[eo->frame];
+	eo->spr->x = eo->x+room.background->x;
+	eo->spr->y = eo->y+room.background->y;
 }
 
 void object_anim_frame(struct ExtraObject *eo)
@@ -143,12 +156,6 @@ void object_anim_frame(struct ExtraObject *eo)
 		if (eo->frame >= std->nb_frames)
 			eo->frame=0;
 	}	
-	eo->spr->fr = std->frames[eo->frame];
-
-	// transfer coordinates
-	eo->spr->x = eo->x+room.background->x;
-	eo->spr->y = eo->y+room.background->y;
-
 }
 
 // updates return 
@@ -242,6 +249,7 @@ void player_obj_collide( Quad *q )
 			continue;
 
 		// callback based/update
+		// TODO collision side ?
 		uint8_t coltype = eo->collide ? eo->collide(eo) : col_block;
 
 		// checks if ABCD. only 2 checks, others are done
@@ -308,7 +316,7 @@ void player_control_pull(void)
 {
 	// still pulling ?
 	if (!GAMEPAD_PRESSED(0,B)) {
-		room.hold = NULL;
+		room.hold = (void *)0;
 		object_set_state(&player, (player.state & ~3) | 2); // idle
 		return;
 	}
@@ -432,6 +440,13 @@ void game_frame()
 
 	// update objects 
 
+	// move player
+	player.x += player.vx;
+	player.y += player.vy;
+	object_anim_frame(&player);
+	object_transfer(&player);
+
+	bg_scroll();
 
 	// -- Update positions / animations
 	for (int i=0;i<room.nb_objects;i++) {
@@ -442,6 +457,7 @@ void game_frame()
 		eo->x += eo->vx;
 		eo->y += eo->vy;
 		object_anim_frame(eo);
+		object_transfer(eo);
 	}
 	
 	// move hold object 
@@ -450,12 +466,6 @@ void game_frame()
 		room.hold->y += player.vy;
 	}
 
-	// move player
-	player.x += player.vx;
-	player.y += player.vy;
-	object_anim_frame(&player);
-
-	bg_scroll();
 
 	// room callback
 	room_defs[room.id].frame();

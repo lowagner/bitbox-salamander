@@ -6,6 +6,16 @@
    <property name="state" value="letter"/>
   </properties>
  </tile>
+ <tile id="2">
+  <properties>
+   <property name="state" value="chest_open"/>
+  </properties>
+ </tile>
+ <tile id="3">
+  <properties>
+   <property name="state" value="chest_closed"/>
+  </properties>
+ </tile>
  <tile id="4">
   <properties>
    <property name="state" value="vase"/>
@@ -24,16 +34,6 @@
   </animation>
  </tile>
  <tile id="8">
-  <properties>
-   <property name="state" value="chestnight_open"/>
-  </properties>
- </tile>
- <tile id="9">
-  <properties>
-   <property name="state" value="chestnight_closed"/>
-  </properties>
- </tile>
- <tile id="10">
   <properties>
    <property name="state" value="stick"/>
   </properties>

@@ -21,13 +21,21 @@ static void window_dlg()
 
 void start_enter(uint8_t entry)
 {
-	message("entering room : start\n");
+	// only one entry 
 	player.x = 150;
 	player.y = 60;
 
 	for (int i=0;i<room.nb_objects;i++) {
-		if (room.objects[i].type == type_start_bed) 
+		switch (room.objects[i].type) {
+		case type_start_bed : 
 			room.objects[i].collide = collide_canpull;
+			break;
+		case type_start_chest : 
+			room.objects[i].data.w = obj_letter;
+			room.objects[i].collide = collide_chest;
+			break;
+		}
+
 	}
 }
 
@@ -39,7 +47,6 @@ uint8_t start_background_collide(uint8_t bgtype)
 
 	switch (bgtype) {
 		case terrain_start_stair : 
-			// sound stair ?
 			wait_vsync(20);
 			room_load(room_town_nuit,0);
 			return col_block;
@@ -53,7 +60,7 @@ uint8_t start_background_collide(uint8_t bgtype)
 
 		case terrain_start_hole : 
 			// must have all feet there
-			// player_fall();
+			// player_fall(room, entry);
 			message("falling animation ...\n");
 			room_load(room_start_underground,0);
 			return col_walk;

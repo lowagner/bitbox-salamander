@@ -60,11 +60,13 @@ void *load_resource(const void *data)
 		}
 		// didnt find it
 		if (nb_compressed==MAX_COMPRESSED) {
-			message("too many decompressed objects. see resouces.c\n");
+			message("too many decompressed objects. see resources.c\n");
 			die (7,2);
 		}
 		comptab[nb_compressed].compressed = data;
 		comptab[nb_compressed].decompressed = lz4_stream_decompress(data);
+		message("Total RAM left : %d bytes\n",t_available());
+
 
 		return comptab[nb_compressed++].decompressed;
 	} else {

@@ -215,4 +215,9 @@
    <frame tileid="66" duration="100"/>
   </animation>
  </tile>
+ <tile id="70">
+  <properties>
+   <property name="state" value="receive"/>
+  </properties>
+ </tile>
 </tileset>
