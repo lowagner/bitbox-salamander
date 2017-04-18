@@ -55,7 +55,7 @@ void rat_update(struct ExtraObject *this) {
 			return;
 		}
 	} else { // walking: if collide, corresponding pause 
-		if ( bg_collide(this).w || !this->data.w) { 
+		if ( object_bg_collide(this).w || !this->data.w) { 
 			this->state += 4;
 			rat_setspeed(this);
 			this->data.w = rand() % 64; // pause before re start
@@ -65,8 +65,19 @@ void rat_update(struct ExtraObject *this) {
 	}
 }	
 
-uint8_t collide_hurt(struct ExtraObject *this) {
-	return col_hit1;
+uint8_t collide_hurt(struct ExtraObject *this) 
+{
+	if (room.invincibility_frames) 
+		return col_walk;
+
+	message ("ouch ! \n");
+	// TODO play sound hurt
+	if (status.life) 
+		status.life--; 
+	// TODO check game over
+	room.invincibility_frames = 60;
+	window_draw_hud();
+	return col_block; // bump ?
 }
 
 uint8_t collide_canpull(struct ExtraObject *this)

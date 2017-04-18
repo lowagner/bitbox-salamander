@@ -144,7 +144,7 @@ void window_draw_hud() // (re)draw hud
 
 
 	// tmap_blitlayer(window, 0,12,window->b,data_window_tmap,layer_window_hud);
-	window_set(HUD_H*8);
+	window_set(HUD_H*8+2);
 }
 
 // face_id : 0 if none

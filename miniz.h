@@ -1,6 +1,8 @@
 #pragma once
 #include <stdbool.h>
 #include "lib/blitter/blitter.h"
+#include "lib/blitter/mapdefs.h"
+
 
 #define ALL_ROOMS \
 	X(beach) \
@@ -47,14 +49,6 @@ enum CollisionType
 	col_grass,
 };
 
-// Window
-void window_init();
-void window_set(int y_target);
-void window_draw_hud();
-int  window_dialog (const int face_id,const char *msg,const char *answers);
-
-// Blocking wait for new joystick button pressed, send it.
-int wait_joy_pressed() ;
 
 // Sprites
 struct ExtraObject {
@@ -79,7 +73,7 @@ struct ExtraObject {
 extern struct ExtraObject player;
 
 
-// room status, in ram
+// room temporary status, in ram
 struct Room {
 	int id; // current room id
 
@@ -90,7 +84,16 @@ struct Room {
 	struct ExtraObject objects[MAX_OBJECTS];
 	
 	struct ExtraObject *hold; // pulling / lifting
-	
+	uint8_t invincibility_frames; // invincibility frames
+};
+
+// room static definitions (def is read only)
+struct RoomDef {
+	const struct MapDef *def;
+	void (*start)(uint8_t );
+	void (*frame)(void);
+	uint8_t (*bg_col)(uint8_t);
+	void (*exit)(void);
 };
 
 // all objects
@@ -124,19 +127,34 @@ struct Status {
 
 extern struct Room room;
 extern struct Status status; 
+extern const struct RoomDef room_defs[];
 
+// Window
+void window_init();
+void window_set(int y_target);
+void window_draw_hud();
+int  window_dialog (const int face_id,const char *msg,const char *answers);
+
+// Blocking wait for new joystick button pressed, send it.
+int wait_joy_pressed() ;
 // room functions
 void object_set_state(struct ExtraObject *o, int state);
-void objects_collisions( void (*f)(struct ExtraObject *) );
 void object_anim_frame(struct ExtraObject *eo);
 void object_transfer(const struct ExtraObject *eo);
+Quad object_bg_collide(struct ExtraObject *eo);
+void object_block (struct ExtraObject *eo, Quad collision);
 
-void player_canpull(const struct ExtraObject *eo); // the player can pull this in this frame
+// player.c
+void player_obj_collide( Quad *q );
+void player_control(void);
+void player_init(void);
+void player_reset(void); // reset for room
 
+// resource 
 void resource_init(void);
 void *load_resource(const void *data);
-void resource_unload_all();
+void resource_unload_all(void);
 
+// in main
 void room_load(int room_id, int entry);
 void bg_scroll(void);
-Quad bg_collide(struct ExtraObject *obj);

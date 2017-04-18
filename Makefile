@@ -7,6 +7,8 @@ GAME_C_FILES = main.c \
 	lib/blitter/blitter_tmap.c \
 	lib/blitter/blitter_sprites.c \
 	$(ROOMS:%=room_%.c) \
+	object.c \
+	player.c \
 	resources.c \
 	behaviours.c \
 	window.c 
