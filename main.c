@@ -15,7 +15,7 @@
 #include "miniz.h"
 
 
-#define START_ROOM  room_start_ug_laby
+#define START_ROOM  room_start
 #define START_ENTRY 0
 
 #define X(room) extern const struct MapDef map_##room;
