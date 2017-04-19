@@ -60,9 +60,7 @@ uint8_t start_background_collide(uint8_t bgtype)
 
 		case terrain_start_hole : 
 			// must have all feet there
-			// player_fall(room, entry);
-			message("falling animation ...\n");
-			room_load(room_start_underground,0);
+			player_fall(room_start_underground,0);
 			return col_walk;
 
 		default: 

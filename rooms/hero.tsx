@@ -220,4 +220,16 @@
    <property name="state" value="receive"/>
   </properties>
  </tile>
+ <tile id="71">
+  <properties>
+   <property name="state" value="falling"/>
+  </properties>
+  <animation>
+   <frame tileid="71" duration="100"/>
+   <frame tileid="72" duration="100"/>
+   <frame tileid="73" duration="100"/>
+   <frame tileid="73" duration="100"/>
+   <frame tileid="73" duration="100"/>
+  </animation>
+ </tile>
 </tileset>

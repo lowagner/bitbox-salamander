@@ -5,8 +5,8 @@
 
 // get all useful sprites/maps defs. not sure you can use X macros here 
 #include "sprite_rat.h"
-#include "sprite_items16.h"
 #include "sprite_hero.h"
+#include "sprite_items16.h" // for chest
 
 // set speed according to state
 static void rat_setspeed(struct ExtraObject *this)
@@ -97,35 +97,23 @@ uint8_t collide_chest(struct ExtraObject *this)
 {
 	if (GAMEPAD_PRESSED(0,B)) {
 		object_set_state(this,state_items16_chest_open); // open it
-		int old_state = player.state; // save player state
-		object_set_state(&player, state_hero_receive);
-
-		// force update of frames now
-		object_transfer(&player);
 		object_transfer(this);
 
-		// display item as a raw sprite
-		object *spr= sprite_new(
-				sprite_items16.file,
-				player.spr->x+15,
-				player.spr->y+2,
-				-1); // front of player
-		// TODO frame from obj_type !
-
-		for (int i=0;i<10;i++) {
-			spr->y-=1;
-			wait_vsync(6);
-		}
-
-		blitter_remove(spr); // FIXME crash on exit room ?
-		
-		object_set_state(&player, old_state);
+		player_take_anim(this->data.w);
 		// TODO inventory update
 
 		// will not give anymore
 		this->collide = 0;
-
-
 	}
 	return col_block;
+}
+
+
+// exit to room b[0], exit number b[1]
+uint8_t collide_exit(struct ExtraObject *this)
+{
+	// TODO trigger a small exit animation with b[2] ?
+	wait_vsync(20);
+	room_load(this->data.b[0], this->data.b[1]);
+	return col_walk;
 }

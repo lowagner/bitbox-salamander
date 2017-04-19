@@ -6,6 +6,11 @@
    <property name="state" value="letter"/>
   </properties>
  </tile>
+ <tile id="1">
+  <properties>
+   <property name="state" value="transp"/>
+  </properties>
+ </tile>
  <tile id="2">
   <properties>
    <property name="state" value="chest_open"/>

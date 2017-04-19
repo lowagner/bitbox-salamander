@@ -1,6 +1,7 @@
 #include "miniz.h"
 
 #include "sprite_hero.h"
+#include "sprite_items16.h" // for take
 
 // collision between player and objects
 // room transforms the collision type into collision type
@@ -133,6 +134,49 @@ void player_control(void)
 	else 
 		player_control_walk();
 }
+
+
+void player_fall(int room_id, int entry)
+{
+	object_set_state(&player, state_hero_falling);
+	object_transfer(&player);
+	wait_vsync(10);
+
+	for (int i=0;i<30;i++) {
+		object_anim_frame(&player);
+		object_transfer(&player);
+		wait_vsync(1);
+	}
+	room_load(room_id,entry);
+}
+
+
+void player_take_anim(int object_type)
+{
+	int old_state = player.state; // save player state
+	object_set_state(&player, state_hero_receive);
+
+	// force update of frames now
+	object_transfer(&player);
+
+	// display item as a raw sprite
+	object *spr= sprite_new(
+			sprite_items16.file,
+			player.spr->x+15,
+			player.spr->y+2,
+			-1); // front of player
+	// TODO frame from obj_type !
+
+	for (int i=0;i<10;i++) {
+		spr->y-=1;
+		wait_vsync(6);
+	}
+
+	blitter_remove(spr); // FIXME crash on exit room ?
+	
+	object_set_state(&player, old_state);
+}
+
 
 void player_init(void)
 {

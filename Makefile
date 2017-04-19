@@ -1,6 +1,6 @@
 NAME=sal
 
-ROOMS:= start town beach bateau town_nuit start_underground
+ROOMS:= start town beach bateau town_nuit start_underground start_ug_laby
 
 GAME_C_FILES = main.c \
 	lib/blitter/blitter.c \

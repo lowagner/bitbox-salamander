@@ -11,6 +11,7 @@
 	X(bateau) \
 	X(town_nuit) \
 	X(start_underground) \
+	X(start_ug_laby) \
 
 
 // room defs
@@ -29,6 +30,7 @@ enum room_id_list {
 #define FATHER 0x66
 #define GUARD_ANGRY 0x52
 #define GUARD_NEUTRAL 0x51
+#define PNJ_OLD 0x76
 
 
 // quad u32<->4u8
@@ -120,9 +122,11 @@ struct Status {
 	unsigned sword: 3; // different types, only one at a time. see sword enum
 
 	unsigned keys:2;
+
 	// switches
 	unsigned town_nuit_guard_talked: 2;
 	unsigned start_sub_shown_msg:1;
+	unsigned start_laby_talked_old:1;
 };
 
 extern struct Room room;
@@ -149,6 +153,8 @@ void player_obj_collide( Quad *q );
 void player_control(void);
 void player_init(void);
 void player_reset(void); // reset for room
+void player_fall(int room_id, int entry); 
+void player_take_anim(int object_type);
 
 // resource 
 void resource_init(void);

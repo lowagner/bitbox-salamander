@@ -62,6 +62,11 @@
   <objectgroup draworder="index">
    <object id="1" x="6" y="6" width="14" height="10"/>
   </objectgroup>
+  <animation>
+   <frame tileid="16" duration="100"/>
+   <frame tileid="16" duration="100"/>
+   <frame tileid="22" duration="100"/>
+  </animation>
  </tile>
  <tile id="17">
   <properties>
@@ -70,6 +75,11 @@
   <objectgroup draworder="index">
    <object id="1" x="-1" y="7" width="16" height="9"/>
   </objectgroup>
+  <animation>
+   <frame tileid="17" duration="100"/>
+   <frame tileid="17" duration="100"/>
+   <frame tileid="23" duration="100"/>
+  </animation>
  </tile>
  <tile id="18">
   <properties>
@@ -86,5 +96,20 @@
   <objectgroup draworder="index">
    <object id="1" x="5" y="8" width="9" height="12"/>
   </objectgroup>
+ </tile>
+ <tile id="24">
+  <properties>
+   <property name="state" value="sleeping"/>
+  </properties>
+  <animation>
+   <frame tileid="24" duration="100"/>
+   <frame tileid="24" duration="100"/>
+   <frame tileid="25" duration="100"/>
+   <frame tileid="25" duration="100"/>
+   <frame tileid="26" duration="100"/>
+   <frame tileid="26" duration="100"/>
+   <frame tileid="25" duration="100"/>
+   <frame tileid="25" duration="100"/>
+  </animation>
  </tile>
 </tileset>
