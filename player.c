@@ -127,6 +127,7 @@ static void player_control_pull(void)
 	}
 }
 
+
 void player_control(void)
 {
 	if (player_ispulling()) // pulling ?
@@ -153,6 +154,7 @@ void player_fall(int room_id, int entry)
 
 void player_take_anim(int object_type)
 {
+
 	int old_state = player.state; // save player state
 	object_set_state(&player, state_hero_receive);
 
@@ -165,14 +167,15 @@ void player_take_anim(int object_type)
 			player.spr->x+15,
 			player.spr->y+2,
 			-1); // front of player
-	// TODO frame from obj_type !
+	spr->fr = sprite_items16.states[object_type].frames[0];
 
 	for (int i=0;i<10;i++) {
 		spr->y-=1;
 		wait_vsync(6);
 	}
+	wait_vsync(20); // little pause
 
-	blitter_remove(spr); // FIXME crash on exit room ?
+	blitter_remove(spr); 
 	
 	object_set_state(&player, old_state);
 }

@@ -6,13 +6,13 @@
 #define _(x) x
 
 #define ALL_ROOMS \
-	X(beach) \
 	X(start) \
+	X(start_town) \
+	X(start_underground) \
+	X(start_labyrinth) \
+	X(beach) \
 	X(town) \
 	X(bateau) \
-	X(town_nuit) \
-	X(start_underground) \
-	X(start_ug_laby) \
 
 
 // room defs
@@ -78,8 +78,6 @@ extern struct ExtraObject player;
 
 // room temporary status, in ram
 struct Room {
-	int id; // current room id
-
 	object *background;
 	uint8_t *tmap;
 
@@ -101,28 +99,60 @@ struct RoomDef {
 
 // all objects
 enum {
-	obj_sword_none,
-	obj_sword_stick,
-	obj_sword_rusted,
-	obj_sword_metal,
-	obj_sword_gold,
-	obj_sword_enchanted,
-	obj_letter,
+	sword_none,
+	sword_stick,
+	sword_rusted,
+	sword_metal,
+	sword_gold,
+	sword_enchanted,
+};
+
+enum {
+	shield_none,
+	shield_wood,
+	shield_metal,
+	shield_enchanted,
+};
+
+enum {
+	obj_light, 
+	obj_punch,
+	obj_ring,
+	obj_key,
+	obj_feather,
+	obj_shovel,
+	obj_hammer,
+	obj_bow,
+	obj_wand,
+	obj_sceptre_red,
+	obj_sceptre_green,
+	obj_sceptre_blue,
+
+	NB_OBJECTS
 };
 
 // global status (saved)
 struct Status {
+	unsigned room_id:6; // current room id 
+
 	unsigned life: 5; // shown as half-hearts
 	unsigned life_max: 5; 
 	unsigned mana: 3;
 	
-	// inventory
+	// resources inventory
 	unsigned gold: 7;
 	unsigned bombs: 5; 
 	unsigned arrows: 5;
-	unsigned sword: 3; // different types, only one at a time. see sword enum
 
-	unsigned keys:2;
+	// replaced items 
+	unsigned sword:  3; // different types, only one at a time. see sword enum
+	unsigned shield: 3; // different types, only one at a time. see sword enum
+
+	// bitfield objects
+	unsigned objects: NB_OBJECTS;
+
+
+	// unsigned keys:2; //
 
 	// switches
 	unsigned town_nuit_guard_talked: 2;
@@ -139,6 +169,8 @@ void window_init();
 void window_set(int y_target);
 void window_draw_hud();
 int  window_dialog (const int face_id,const char *msg,const char *answers);
+void window_inventory();
+
 
 // Blocking wait for new joystick button pressed, send it.
 int wait_joy_pressed() ;

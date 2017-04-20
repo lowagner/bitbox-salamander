@@ -80,9 +80,9 @@ void object_block (struct ExtraObject *eo, Quad collision)
 static inline uint8_t bg_property_at(int x, int y)
 {
 	// XXX scroll offset
-	uint8_t tileid = room.tmap[y/16*room_defs[room.id].def->tilemap_w+x/16]; 
+	uint8_t tileid = room.tmap[y/16*room_defs[status.room_id].def->tilemap_w+x/16]; 
 	// 4 corners in a tile
-	uint16_t ter_tile = room_defs[room.id].def->terrains[tileid-1]; // 1-based
+	uint16_t ter_tile = room_defs[status.room_id].def->terrains[tileid-1]; // 1-based
 	if (x%16<8) { 	// left
 		return y%16<8 ? (ter_tile>>12)&0xf : (ter_tile>>4)&0xf;
 	} else { 		// right
@@ -100,7 +100,7 @@ Quad object_bg_collide(struct ExtraObject *eo)
 	const int bx2=eo->x+eo->vx+def->x2;
 	const int by2=eo->y+eo->vy+def->y2;
 
-	uint8_t (*f)(uint8_t) = room_defs[room.id].bg_col;
+	uint8_t (*f)(uint8_t) = room_defs[status.room_id].bg_col;
 
 	uint8_t a = f(bg_property_at (bx1,by1));
 	uint8_t b = f(bg_property_at (bx2,by1));

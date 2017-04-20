@@ -76,17 +76,16 @@ void room_load(int room_id, int entry)
 	// now load map 
 	const struct MapDef *def = room_defs[room_id].def; // shortcut
 
-	room.id = room_id;
+	status.room_id = room_id;
 	
 	room.nb_objects = def->nb_objects;
 	room.tmap = load_resource(def->tilemap);
 	room.background = tilemap_new(
 		load_resource(def->tileset),
 		0,0,
-		TMAP_HEADER(def->tilemap_w,def->tilemap_h,def->tilesize,TMAP_U8) | TSET_8bit,
+		TMAP_HEADER(def->tilemap_w,def->tilemap_h,TSET_16,TMAP_U8) | TSET_8bit,
 		room.tmap
 		);
-
 	
 	// create objects / allocate sprites 
 	for (int i=0;i<def->nb_objects;i++) {
@@ -159,6 +158,11 @@ void game_init()
 	status.bombs = 8;
 	status.arrows = 16;
 
+	status.sword = sword_none;
+	status.shield = shield_none;
+
+	status.objects = 0b111111111111111U; // all objects
+
 
 	room_load(START_ROOM,START_ENTRY);
 	window_draw_hud();
@@ -167,9 +171,16 @@ void game_init()
 
 void game_frame()
 {
-	uint8_t old_room=room.id;
+	uint8_t old_room=status.room_id;
+
+	if (GAMEPAD_PRESSED(0,start)) {
+		window_inventory();
+	}
+
+
 	// --- update player
-	player_control(); // reads gamepad, updates player vx, vy and control
+	player_control(); // reads gamepad, updates player vx, vy and control. 
+
 	// now check potential collisions and handle them
 	// reads terrain_id of player corners (after movement)
 	Quad collide = object_bg_collide (&player); 
@@ -181,7 +192,7 @@ void game_frame()
 	// adjusts current speed according to blocking status of each corner
 	object_block (&player, collide);
 
-	if (old_room != room.id) 
+	if (old_room != status.room_id) 
 		return; // if we changed room, skip frame
 
 	// move player
@@ -220,6 +231,6 @@ void game_frame()
 
 
 	// room callback
-	room_defs[room.id].frame();
+	room_defs[status.room_id].frame();
 
 }

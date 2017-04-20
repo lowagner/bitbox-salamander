@@ -72,9 +72,10 @@ static void draw_window(int x1, int y1, int x2, int y2)
 	for (int i=y1;i<y2;i++) {
 		vram[i][x1] =164;
 		vram[i][x2] =165;
+	}
+	for (int i=y1+1;i<y2;i++)
 		for (int j=x1+1; j<x2;j++)
 			vram[i][j] = ' '+1;
-	}
 
 	// singles at corners
 	vram[y1][x1] = 161;
@@ -96,8 +97,9 @@ static void draw_dialog(int x1,int y1,int x2,int y2)
 	vram[y1][x1+1] = 33; 
 }
 
-#define HUD_W 22
+#define HUD_W 25
 #define HUD_H 3
+
 
 #define HUD_X ((40-HUD_W)/2)
 #define HUD_Y (15-HUD_H)
@@ -126,6 +128,7 @@ void window_draw_hud() // (re)draw hud
 		{207,223},	{222,223},	{222,223},
 	};
 
+	vram[HUD_Y+0][HUD_X+21] = 236;
 	vram[HUD_Y+1][HUD_X+21] = mana_chars[status.mana][0];
 	vram[HUD_Y+2][HUD_X+21] = mana_chars[status.mana][1];
 	vram[HUD_Y+3][HUD_X+21] = 205;
@@ -143,9 +146,46 @@ void window_draw_hud() // (re)draw hud
 	vram[HUD_Y+2][HUD_X+7] = status.arrows%10 + 49; 
 
 
-	// tmap_blitlayer(window, 0,12,window->b,data_window_tmap,layer_window_hud);
 	window_set(HUD_H*8+2);
 }
+
+static void draw_item(int x,int y,int line, int item_id)
+{
+	for (int i=0;i<2;i++)
+		for (int j=0;j<2;j++)
+			vram[y+i][x+j]=data_window_tmap[
+				(layer_window_items*16+line*2+i)*40+\
+				item_id*2+j
+				];
+}
+
+void window_inventory()
+{
+	window_draw_hud();
+	draw_window(HUD_X      ,0,HUD_X+2*6  ,HUD_Y-2);
+	draw_window(HUD_X+2*8+1,0,HUD_X+HUD_W,HUD_Y-2);
+
+	draw_item(26,HUD_Y-4,1,status.shield);
+	draw_item(29,HUD_Y-4,2,status.sword);
+
+	for (int i=0;i<NB_OBJECTS;i++) {
+		if (status.objects & (1<<i))
+			draw_item(
+				HUD_X+1+(i%4)*3,
+				1+(i/4)*3,
+				0,i);
+	}
+
+
+	window_set(window->h); // show all
+
+	// wait for re-press ENTER to leave
+	while (wait_joy_pressed() != gamepad_start);
+
+	window_set(HUD_H*8+2);
+	
+}
+
 
 // face_id : 0 if none
 // msg : \n separated multiline message.

@@ -31,7 +31,7 @@ void start_enter(uint8_t entry)
 			room.objects[i].collide = collide_canpull;
 			break;
 		case type_start_chest : 
-			room.objects[i].data.w = obj_letter;
+			room.objects[i].data.w = state_items16_letter; // not give, special in fact
 			room.objects[i].collide = collide_chest;
 			break;
 		}
@@ -48,7 +48,7 @@ uint8_t start_background_collide(uint8_t bgtype)
 	switch (bgtype) {
 		case terrain_start_stair : 
 			wait_vsync(20);
-			room_load(room_town_nuit,0);
+			room_load(room_start_town,0);
 			return col_block;
 
 		case terrain_start_window : 

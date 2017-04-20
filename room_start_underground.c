@@ -5,11 +5,13 @@
 
 #include "map_start_underground.h"
 
+static const uint16_t entries[][2] = {{120,580},{280,27}};
 
 void start_underground_enter(uint8_t entry)
 {
-	player.x = 120;
-	player.y = 580;
+
+	player.x = entries[entry][0];
+	player.y = entries[entry][1];
 
 	for (int i=0;i<room.nb_objects;i++) {
 		struct ExtraObject *eo = &room.objects[i];
@@ -24,7 +26,7 @@ void start_underground_enter(uint8_t entry)
 				break;
 
 			case type_start_underground_exit1 : 
-				eo->data.b[0]=room_start_ug_laby;
+				eo->data.b[0]=room_start_labyrinth;
 				eo->data.b[1]=0;
 				eo->collide = collide_exit;
 				break;

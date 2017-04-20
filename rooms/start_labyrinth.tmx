@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="32" height="44" tilewidth="16" tileheight="16" nextobjectid="5">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="32" height="44" tilewidth="16" tileheight="16" nextobjectid="7">
  <tileset firstgid="1" name="tiles_cavern" tilewidth="16" tileheight="16" tilecount="32" columns="8">
   <image source="tiles_cavern.png" trans="ff00da" width="128" height="64"/>
   <terraintypes>
@@ -18,7 +18,8 @@
   <tile id="17" terrain="0,0,,"/>
   <tile id="18" terrain="0,,,"/>
  </tileset>
- <tileset firstgid="33" source="pnj.tsx"/>
+ <tileset firstgid="33" source="items16.tsx"/>
+ <tileset firstgid="49" source="pnj.tsx"/>
  <layer name="tiles" width="32" height="44">
   <data encoding="csv">
 20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,
@@ -68,6 +69,7 @@
 </data>
  </layer>
  <objectgroup name="obj">
-  <object id="2" type="old" gid="33" x="80" y="342" width="16" height="20"/>
+  <object id="2" type="old" gid="49" x="80" y="342" width="16" height="20"/>
+  <object id="6" type="exit0" gid="34" x="0" y="64" width="16" height="16"/>
  </objectgroup>
 </map>

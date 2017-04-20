@@ -3,7 +3,8 @@ NAME=sal
 # must be empty for english
 #TRANSLATE=_fr
 
-ROOMS:= start town beach bateau town_nuit start_underground start_ug_laby
+ROOMS:= start start_town start_underground start_labyrinth\
+	town beach bateau
 
 GAME_C_FILES = main.c \
 	lib/blitter/blitter.c \
@@ -34,9 +35,10 @@ build/data.mk: $(ROOMS:%=rooms/%.tmx) window.tmx
 
 main.c: data.h # should be automatic
 
-TOCOMPRESS :=  start.tset town.tset bateau.tset beach.tset town_nuit.tset start_underground.tset\
+TOCOMPRESS :=  start.tset town.tset bateau.tset beach.tset start_town.tset start_underground.tset\
 	bed.spr boss.spr bonh.spr rat.spr \
-	start.tmap beach.tmap town.tmap town_nuit.tmap bateau.tmap start_underground.tmap
+	$(ROOMS:%=%.tmap)
+	
 RAWFILES := $(filter-out $(TOCOMPRESS:%=data/%),$(TMX_DATAFILES))
 
 data/%.lz4: data/%

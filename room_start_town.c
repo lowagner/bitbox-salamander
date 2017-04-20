@@ -1,7 +1,7 @@
 #include "miniz.h"
 
 #define MAPS_IMPLEMENTATION
-#include "map_town_nuit.h"
+#include "map_start_town.h"
 
 static void guard_dialog2()
 {
@@ -83,13 +83,13 @@ static void update_guard (struct ExtraObject *this)
 
 
 static const uint16_t entries[][2] = {{124,330}};
-void town_nuit_enter(uint8_t entry)
+void start_town_enter(uint8_t entry)
 {
 	player.x = entries[entry][0];
 	player.y = entries[entry][1];
 	for (int i=0;i<room.nb_objects;i++) {
 		switch(room.objects[i].type) {
-			case type_town_nuit_guard : 
+			case type_start_town_guard : 
 				room.objects[i].update = update_guard;
 				room.objects[i].collide = guard_nuit_collide;
 			break;
@@ -97,9 +97,9 @@ void town_nuit_enter(uint8_t entry)
 	}
 }
 
-void town_nuit_frame() {}
-void town_nuit_exit() {}
-uint8_t town_nuit_background_collide(uint8_t bgtype)
+void start_town_frame() {}
+void start_town_exit() {}
+uint8_t start_town_background_collide(uint8_t bgtype)
 {
 	return bgtype;
 }
