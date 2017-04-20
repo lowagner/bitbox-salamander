@@ -1,12 +1,15 @@
 NAME=sal
 
+# must be empty for english
+#TRANSLATE=_fr
+
 ROOMS:= start town beach bateau town_nuit start_underground start_ug_laby
 
 GAME_C_FILES = main.c \
 	lib/blitter/blitter.c \
 	lib/blitter/blitter_tmap.c \
 	lib/blitter/blitter_sprites.c \
-	$(ROOMS:%=room_%.c) \
+	$(ROOMS:%=room_%$(TRANSLATE).c) \
 	object.c \
 	player.c \
 	resources.c \
@@ -45,5 +48,7 @@ data.h : $(TOCOMPRESS:%=data/%.lz4) $(RAWFILES)
 	python $(BITBOX)/lib/resources/embed.py $(foreach fn,$(TOCOMPRESS),data/$(fn).lz4:$(subst .,_,$(fn))) $(RAWFILES) > data.h
 
 clean::
-	rm -rf $(ROOMS:%=room_%.h) data data.h sprite_*.h map_*.h
+	rm -rf $(ROOMS:%=room_%.h) data data.h sprite_*.h map_*.h room_*_fr.c
 
+%_fr.c: %.c trans_fr.po
+	./i18n.py $< fr

@@ -3,6 +3,7 @@
 #include "lib/blitter/blitter.h"
 #include "lib/blitter/mapdefs.h"
 
+#define _(x) x
 
 #define ALL_ROOMS \
 	X(beach) \

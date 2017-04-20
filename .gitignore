@@ -10,3 +10,4 @@ map_*.h
 sprite_*.h
 
 rooms/_*/
+room_*_fr.c

@@ -37,7 +37,7 @@ void start_underground_frame()
 {
 	if (!status.start_sub_shown_msg) {
 		status.start_sub_shown_msg = true;
-		window_dialog (PLAYER, "An underground passageway in my room !",0);
+		window_dialog (PLAYER, _("An underground passageway in my room !"),0);
 		window_draw_hud();
 	}
 }

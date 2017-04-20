@@ -6,10 +6,10 @@
 #include "map_start.h"
 
 const char *window_msgs[4] = {
-	"Such a vast world and I'm here !",
-	"I can't sleep ! I want to go out !",
-	"The moon is so nice",
-	"Why can't I go see what's outside",
+	_("Such a vast world and I'm here !"),
+	_("I can't sleep ! I want to go out !"),
+	_("The moon is so nice"),
+	_("Why can't I go see what's outside"),
 };
 
 static void window_dlg()
