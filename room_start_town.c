@@ -18,20 +18,20 @@ static int guard_dialog()
 		_("Hi boy, what are you doing ?\n")
 		_("I thought your father never let you go out alone ?"),
 
-		_("ok")
+		_("...")
 		);
 
 	ans= window_dialog (PLAYER, _("Well, ..."),
-		_("mind your own business !\n" )
-		_("my father is not well !\n")
+		_("Mind your own business !\n" )
+		_("My father is not well !\n")
 		_("I'm waiting for him !")
 	);
 
 	switch (ans) {
 		case 0 : 
 			window_dialog (GUARD_ANGRY,
-				_("Young boy, I'm your friend father, and I don't like the way you talk to me.\n")
-				_("And the fact that you're alone at this late hour is my business indeed.\n")
+				_("Young boy, I'm a friend of your father, and I don't like the way you talk to me. ")
+				_("And the fact that you're alone at this late hour is my business indeed. ")
 				_("Come here, I'll bring you home."),
 				0);
 			ans= 1;
@@ -39,17 +39,17 @@ static int guard_dialog()
 		case 1 : 
 			window_dialog (GUARD_NEUTRAL, 
 				_("Oh, your father is in bad shape ?\n")
-				_("Well, it's nice that you found me,\nI'll never let him down alone.\n")
-				_("We're going to your house at once !\n"),0);
+				_("Well, it's good that you told me, I'll make sure to check in on him.\n")
+				_("Let's go back inside."),0);
 			window_dialog (PLAYER, _("Oh, well ..."),0);
 			ans= 0;
 			break;
 		case 2 : 
 		default: 
 			window_dialog (GUARD_NEUTRAL,
-				_("No I haven't seen him just here.\n")
-				_("In fact I was ... returning from the Happy Boar tavern and returning home.\n")
-				_("Let me escort you to your house anyway..."),0);
+				_("Well I haven't seen him around.\n")
+				_("I was returning from the Happy Boar tavern and heading home.")
+				_("Let's have you wait inside in any case..."),0);
 			window_dialog (PLAYER, "...",0);
 			ans= 2;
 	}

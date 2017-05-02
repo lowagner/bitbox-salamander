@@ -227,8 +227,16 @@ int window_dialog (const int face_id,const char *msg,const char *answers)
 	if (msg) {
 		pos=3;
 		for (const char *p=msg; *p; p++) {
-			if (*p=='\n' || pos==39) {
-				nlines++; pos=3;
+			if (pos == 3 && *p == ' ') {
+				continue;
+			} else if (pos == 39) {
+				while (*p--!=' ')
+					vram[8+nlines][--pos] = ' '+1;
+				nlines++;
+				pos=3;
+			} else if (*p=='\n') {
+				nlines++;
+				pos=3;
 			} else {
 				vram[8+nlines][pos++] = *p+1;
 			}
