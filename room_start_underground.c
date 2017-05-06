@@ -7,6 +7,7 @@
 
 static const uint16_t entries[][2] = {{120,580},{280,27}};
 
+
 void start_underground_enter(uint8_t entry)
 {
 
@@ -19,14 +20,18 @@ void start_underground_enter(uint8_t entry)
 			case type_start_underground_rat : 
 				eo->update = rat_update;
 				eo->collide = collide_hurt;
-				break;
-
-			case type_start_underground_rat_sleep : 
-				eo->collide = collide_hurt;
+				eo->hit = rat_hit;
 				break;
 
 			case type_start_underground_exit1 : 
 				eo->data.b[0]=room_start_labyrinth;
+				eo->data.b[1]=0;
+				eo->collide = collide_exit;
+				break;
+
+			// ladder exit to forest
+			case type_start_underground_exit2 : 
+				//eo->data.b[0]=room_forest;
 				eo->data.b[1]=0;
 				eo->collide = collide_exit;
 				break;

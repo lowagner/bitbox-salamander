@@ -1,12 +1,11 @@
-//si touche & pullable OU portable (comme block mais plus haute prio, besoin des deux passe en mode pull)
 /* TODO : 
 
 - window display : dialogs a revoir (progressif, borders collide, button skip)
 - hud
-- unify room / state ?
-- porter 
+- unify room / state ? rename ? 
+- hold objects  
 - shared tilesets
-- special cased blitters ? + nonclipped lines : custom blitter lib
+- nonclipped lines : custom blitter lib
 
 */
 #include "stdbool.h"
@@ -49,9 +48,7 @@ const struct RoomDef room_defs[] = {
 struct Room room;
 struct Status status;
 
-
-// const uint8_t * tile_properties; // ?? terrains ! 
-struct ExtraObject player;
+struct ExtraObject player, sword;
 
 // un/load all objects when entering a room
 void room_load(int room_id, int entry)
@@ -158,11 +155,8 @@ void game_init()
 	status.bombs = 8;
 	status.arrows = 16;
 
-	status.sword = sword_none;
-	status.shield = shield_none;
-
-	status.objects = 0b111111111111111U; // all objects
-
+	status.sword = sword_stick;
+	status.objects = 0b111111111111111UL; // all objects
 
 	room_load(START_ROOM,START_ENTRY);
 	window_draw_hud();
@@ -177,38 +171,9 @@ void game_frame()
 		window_inventory();
 	}
 
-
-	// --- update player
-	player_control(); // reads gamepad, updates player vx, vy and control. 
-
-	// now check potential collisions and handle them
-	// reads terrain_id of player corners (after movement)
-	Quad collide = object_bg_collide (&player); 
-
-
-	// player can collide with objects onscreen. update status
-	player_obj_collide(&collide); 
-
-	// adjusts current speed according to blocking status of each corner
-	object_block (&player, collide);
-
+	player_update();
 	if (old_room != status.room_id) 
 		return; // if we changed room, skip frame
-
-	// move player
-	player.x += player.vx;
-	player.y += player.vy;
-	object_anim_frame(&player);
-	object_transfer(&player);
-	bg_scroll();
-
-	// special for player : handle invincibility (after transfer !)
-	if (room.invincibility_frames) {
-		if (vga_frame%4==0) 
-			player.spr->y = VGA_H_PIXELS;
-		room.invincibility_frames--;
-	}
-
 
 	// update objects 
 	// -- Update positions / animations
@@ -219,15 +184,9 @@ void game_frame()
 
 		eo->x += eo->vx;
 		eo->y += eo->vy;
-		object_anim_frame(eo);
-		object_transfer(eo);
 	}
-	
-	// move hold object 
-	if (room.hold) {
-		room.hold->x += player.vx;
-		room.hold->y += player.vy;
-	}
+
+	object_update_all();
 
 
 	// room callback

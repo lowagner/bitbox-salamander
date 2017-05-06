@@ -97,6 +97,15 @@
    <object id="1" x="5" y="8" width="9" height="12"/>
   </objectgroup>
  </tile>
+ <tile id="20">
+  <properties>
+   <property name="state" value="killed"/>
+  </properties>
+  <animation>
+   <frame tileid="20" duration="100"/>
+   <frame tileid="21" duration="100"/>
+  </animation>
+ </tile>
  <tile id="24">
   <properties>
    <property name="state" value="sleeping"/>

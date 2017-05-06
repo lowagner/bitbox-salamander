@@ -40,7 +40,11 @@ static void rat_setspeed(struct ExtraObject *this)
 
 void rat_update(struct ExtraObject *this) {
 	// if collide or stop : pause a bit, turn left or right
-	if (this->state >= state_rat_pause_r ) { // pause 
+	if (this->state == state_rat_killed) {
+		end_anim_destroy(this);
+	} else if (this->state == state_rat_sleeping) {
+		// do nothing.
+	} else if (this->state >= state_rat_pause_r ) { // pause 
 		if (this->data.w) {
 			this->data.w--;
 		} else {
@@ -63,20 +67,30 @@ void rat_update(struct ExtraObject *this) {
 			this->data.w--;
 		}
 	}
-}	
+}
+
+void rat_hit(struct ExtraObject *this)
+{
+	// set status 
+	object_set_state(this, state_rat_killed);
+	this->vx = 0;
+	this->vx = 0;
+	this->collide=0; // no collide
+
+}
+
 
 uint8_t collide_hurt(struct ExtraObject *this) 
 {
-	if (room.invincibility_frames) 
-		return col_walk;
-
-	message ("ouch ! \n");
-	// TODO play sound hurt
-	if (status.life) 
-		status.life--; 
-	// TODO check game over
-	room.invincibility_frames = 60;
-	window_draw_hud();
+	if (!room.invincibility_frames) {
+		message ("ouch ! \n");
+		// TODO play sound hurt
+		if (status.life) 
+			status.life--; 
+		// TODO check game over
+		room.invincibility_frames = 60;
+		window_draw_hud();
+	}
 	return col_block; // bump ?
 }
 
@@ -116,4 +130,13 @@ uint8_t collide_exit(struct ExtraObject *this)
 	wait_vsync(20);
 	room_load(this->data.b[0], this->data.b[1]);
 	return col_walk;
+}
+
+void end_anim_destroy(struct ExtraObject *this)
+{
+	const struct StateDef *std = &this->def->states[this->state];
+
+	if (vga_frame%8==7 && this->frame == std->nb_frames-1 ) { 
+		object_destroy(this);
+	}
 }

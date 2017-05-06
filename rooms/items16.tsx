@@ -43,4 +43,9 @@
    <property name="state" value="stick"/>
   </properties>
  </tile>
+ <tile id="9">
+  <properties>
+   <property name="state" value="wine"/>
+  </properties>
+ </tile>
 </tileset>

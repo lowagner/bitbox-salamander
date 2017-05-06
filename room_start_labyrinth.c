@@ -8,7 +8,7 @@ static uint8_t dialog_old (struct ExtraObject *this)
 {
 	if (!status.start_laby_talked_old) {
 		window_dialog (PNJ_OLD,_("It's dangerous to go alone. \nTake this."),0);
-		player_take_anim(1); // FIXME give wine
+		player_take_anim(state_items16_wine); 
 		window_dialog (PLAYER, _("Well, ... thank you"),"...");
 		window_dialog (PNJ_OLD,_("What ?"),0);
 		window_dialog (PLAYER, _("It's a bottle of wine ! \nDon't you think I'm too young for this ?"),0);
@@ -25,6 +25,7 @@ static uint8_t dialog_old (struct ExtraObject *this)
 		if (ans) {
 			// say something for usage
 			status.sword=sword_stick;
+
 		}		
 	} else {
 		window_dialog (PNJ_OLD,_("It's dangerous to go alone.\nBut you have my stick now.\nLeave me alone."),0);

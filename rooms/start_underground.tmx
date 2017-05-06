@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="46" tilewidth="16" tileheight="16" nextobjectid="26">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="46" tilewidth="16" tileheight="16" nextobjectid="27">
  <tileset firstgid="1" name="tiles_cavern" tilewidth="16" tileheight="16" tilecount="32" columns="8">
   <image source="tiles_cavern.png" trans="ff00da" width="128" height="64"/>
   <terraintypes>
    <terrain name="block" tile="-1"/>
    <terrain name="top_scale" tile="-1"/>
   </terraintypes>
-  <tile id="0" terrain=",,,0"/>
-  <tile id="1" terrain=",,0,0"/>
-  <tile id="2" terrain=",,0,"/>
+  <tile id="0" terrain="0,0,0,0"/>
+  <tile id="1" terrain="0,0,0,0"/>
+  <tile id="2" terrain="0,0,0,0"/>
   <tile id="3" terrain=",,,0"/>
   <tile id="4" terrain=",,0,"/>
-  <tile id="8" terrain=",0,,0"/>
-  <tile id="10" terrain="0,,0,"/>
+  <tile id="8" terrain="0,0,0,0"/>
+  <tile id="10" terrain="0,0,0,0"/>
   <tile id="11" terrain=",0,,"/>
   <tile id="12" terrain="0,,,"/>
-  <tile id="16" terrain=",0,,"/>
-  <tile id="17" terrain="0,0,,"/>
-  <tile id="18" terrain="0,,,"/>
+  <tile id="16" terrain="0,0,0,0"/>
+  <tile id="17" terrain="0,0,0,0"/>
+  <tile id="18" terrain="0,0,0,0"/>
   <tile id="19" terrain="0,0,0,0"/>
  </tileset>
  <tileset firstgid="33" source="rat.tsx"/>
@@ -78,8 +78,9 @@
   <object id="12" type="rat" gid="49" x="255" y="205" width="22" height="22"/>
   <object id="13" type="rat" gid="49" x="208" y="176" width="22" height="22"/>
   <object id="14" type="rat" gid="49" x="208" y="218" width="22" height="22"/>
-  <object id="20" type="rat_sleep" gid="57" x="74" y="122" width="22" height="22"/>
+  <object id="20" type="rat" gid="57" x="74" y="122" width="22" height="22"/>
   <object id="23" type="rat" gid="45" x="253" y="228" width="22" height="22"/>
   <object id="25" type="exit1" gid="66" x="303" y="47" width="16" height="16"/>
+  <object id="26" type="exit2" gid="66" x="79" y="76" width="16" height="16"/>
  </objectgroup>
 </map>

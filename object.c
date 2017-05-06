@@ -11,7 +11,6 @@ void object_set_state(struct ExtraObject *o, int state)
 
 inline void object_transfer(const struct ExtraObject *eo)
 {
-	// transfer to sprite
 	eo->spr->fr = eo->def->states[eo->state].frames[eo->frame];
 	eo->spr->x = eo->x+room.background->x;
 	eo->spr->y = eo->y+room.background->y;
@@ -79,7 +78,6 @@ void object_block (struct ExtraObject *eo, Quad collision)
 
 static inline uint8_t bg_property_at(int x, int y)
 {
-	// XXX scroll offset
 	uint8_t tileid = room.tmap[y/16*room_defs[status.room_id].def->tilemap_w+x/16]; 
 	// 4 corners in a tile
 	uint16_t ter_tile = room_defs[status.room_id].def->terrains[tileid-1]; // 1-based
@@ -110,3 +108,32 @@ Quad object_bg_collide(struct ExtraObject *eo)
 	return (Quad){.b={a,b,c,d}};
 }
 
+void object_destroy(struct ExtraObject *this)
+{	
+	// in fact mark to delete
+	this->state= TODELETE;
+}
+
+void object_update_all()
+{
+	int i=0;
+	while (i<room.nb_objects) {
+		struct ExtraObject *eo = &room.objects[i];
+
+		if (eo->state==TODELETE) {
+			// remove from blitter
+			blitter_remove(eo->spr);
+
+			// remove from objects
+			for (int j=i;j<room.nb_objects-1;j++)
+				room.objects[j]=room.objects[j+1];
+			room.nb_objects--;
+			// keep i here
+		} else {
+			object_anim_frame(eo);
+			object_transfer(eo);
+			i++;
+		}
+
+	}
+}

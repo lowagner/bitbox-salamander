@@ -5,6 +5,9 @@
   <properties>
    <property name="state" value="attack_r"/>
   </properties>
+  <objectgroup draworder="index">
+   <object id="1" x="12" y="8" width="11" height="19"/>
+  </objectgroup>
   <animation>
    <frame tileid="0" duration="100"/>
    <frame tileid="1" duration="100"/>
@@ -56,6 +59,9 @@
   <properties>
    <property name="state" value="attack_up"/>
   </properties>
+  <objectgroup draworder="index">
+   <object id="1" x="9" y="7" width="15" height="18"/>
+  </objectgroup>
   <animation>
    <frame tileid="15" duration="100"/>
    <frame tileid="16" duration="100"/>
@@ -109,6 +115,9 @@
   <properties>
    <property name="state" value="attack_dn"/>
   </properties>
+  <objectgroup draworder="index">
+   <object id="1" x="9" y="11" width="15" height="15"/>
+  </objectgroup>
   <animation>
    <frame tileid="30" duration="100"/>
    <frame tileid="31" duration="100"/>

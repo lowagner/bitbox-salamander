@@ -26,7 +26,7 @@ enum room_id_list {
 #define HUD_HEIGHT 4
 
 // faces : line<<4|col
-#define PLAYER 0x44
+#define PLAYER 0x44 // or make it custom ? 
 #define PNJ1 1
 #define FATHER 0x66
 #define GUARD_ANGRY 0x52
@@ -54,12 +54,13 @@ enum CollisionType
 
 
 // Sprites
+#define TODELETE 255
 struct ExtraObject {
 	const struct SpriteDef *def;
 	object *spr;
 
-	uint8_t frame; // within animation
-	uint8_t state;
+	uint8_t frame; // within animation. 
+	uint8_t state; 
 	
 	uint8_t type;
 
@@ -69,11 +70,12 @@ struct ExtraObject {
 	// callbacks
 	void    (*update)  (struct ExtraObject *this);  
 	uint8_t (*collide) (struct ExtraObject *this);  // returns a col_type
+	void    (*hit)     (struct ExtraObject *this); 
 
 	Quad data; // extra data 
 };
 
-extern struct ExtraObject player;
+extern struct ExtraObject player, sword;
 
 
 // room temporary status, in ram
@@ -86,6 +88,8 @@ struct Room {
 	
 	struct ExtraObject *hold; // pulling / lifting
 	uint8_t invincibility_frames; // invincibility frames
+
+	struct ExtraObject *sword; // current equipped sword. 
 };
 
 // room static definitions (def is read only)
@@ -97,22 +101,22 @@ struct RoomDef {
 	void (*exit)(void);
 };
 
-// all objects
+// weapons objects
 enum {
 	sword_none,
 	sword_stick,
-	sword_rusted,
 	sword_metal,
-	sword_gold,
 	sword_enchanted,
 };
 
+/*
 enum {
 	shield_none,
 	shield_wood,
 	shield_metal,
 	shield_enchanted,
 };
+*/
 
 enum {
 	obj_light, 
@@ -152,7 +156,7 @@ struct Status {
 	unsigned objects: NB_OBJECTS;
 
 
-	// unsigned keys:2; //
+	// unsigned keys:2; // or an object / dungeon object
 
 	// switches
 	unsigned town_nuit_guard_talked: 2;
@@ -180,8 +184,10 @@ void object_anim_frame(struct ExtraObject *eo);
 void object_transfer(const struct ExtraObject *eo);
 Quad object_bg_collide(struct ExtraObject *eo);
 void object_block (struct ExtraObject *eo, Quad collision);
+void object_destroy(struct ExtraObject *eo);
 
 // player.c
+void player_update(void);
 void player_obj_collide( Quad *q );
 void player_control(void);
 void player_init(void);

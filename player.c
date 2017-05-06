@@ -1,10 +1,11 @@
 #include "miniz.h"
 
 #include "sprite_hero.h"
+#include "sprite_sword.h"
 #include "sprite_items16.h" // for take
 
-// collision between player and objects
-// room transforms the collision type into collision type
+// check collision between player and objects
+// room transforms the collision into collision type
 void player_obj_collide( Quad *q ) 
 {
 
@@ -15,11 +16,18 @@ void player_obj_collide( Quad *q )
 	const int plx2=player.x+player.vx+def->x2;
 	const int ply2=player.y+player.vy+def->y2;
 
+	// position of sword if is attacking
+	const struct StateDef* swdef = &sword.def->states[sword.state];
+	const int swx1=sword.x+swdef->x1;
+	const int swy1=sword.y+swdef->y1;
+	const int swx2=sword.x+swdef->x2;
+	const int swy2=sword.y+swdef->y2;
+
 	for (int i=0;i<room.nb_objects;i++) {
 		struct ExtraObject *eo = &room.objects[i];
 
-		// dont collide with hold item
-		if (eo == room.hold) 
+		// dont collide with hold item or sword
+		if (eo == room.hold || eo == &sword) 
 			continue;
 
 		const struct StateDef *std = &(eo->def->states[eo->state]);
@@ -29,12 +37,16 @@ void player_obj_collide( Quad *q )
 		const int ax2=eo->x+eo->vy+std->x2;
 		const int ay2=eo->y+eo->vy+std->y2;
 
-		// first AABB collision
+		// check if collides with sword. if so, hit()
+		if (!((ax1 > swx2) || (ax2 <  swx1) || (ay2 <  swy1) || (ay1 > swy2)) && eo->hit)
+			eo->hit(eo);
+
+		// first AABB collision with player
 		if ((ax1 > plx2) || (ax2 <  plx1) || (ay2 <  ply1) || (ay1 > ply2))
 			continue;
 
 		// callback based/update
-		// TODO collision side ?
+		// TODO send collision side ?
 		uint8_t coltype = eo->collide ? eo->collide(eo) : col_block;
 
 		// checks if ABCD. only 2 checks, others are done
@@ -51,14 +63,25 @@ void player_obj_collide( Quad *q )
 		if (!(ax2<plxm || ay2<plym))
 			if (q->b[3]<coltype) q->b[3]=coltype;
 	}
-
 }
 
 // player states : RUDL x AWIP
-inline bool player_iswalking() { return player.state % 4 == 1;  }
-inline bool player_ispulling() { return player.state % 4 == 3; }
+inline bool player_isattacking() { return player.state % 4 == 0; }
+inline bool player_iswalking()   { return player.state % 4 == 1; }
+inline bool player_ispulling()   { return player.state % 4 == 3; }
+
 // keeps orientation
-inline void player_setidle()   { object_set_state(&player,(player.state&~3) | 2 ); }
+static void player_attack()  { 
+	object_set_state(&player,(player.state&~3) | 0) ; 
+	player.vx=0;
+	player.vy=0; 
+	// show & anim sword 
+	sword.x = player.x;
+	sword.y = player.y;
+	object_set_state(&sword, player.state / 4); // FIXME depend on word type
+}
+
+static void player_setidle() { object_set_state(&player,(player.state&~3) | 2 ); }
 
 static void player_control_walk(void)
 {
@@ -89,6 +112,10 @@ static void player_control_walk(void)
 	}
 
 
+	// start attacking
+	if (GAMEPAD_PRESSED(0,A) && status.sword)
+		player_attack();
+
 	// rest 
 	if (!gamepad_buttons[0]) {
 		if (player_iswalking())
@@ -96,7 +123,7 @@ static void player_control_walk(void)
 	}
 }
 
-
+// enter this state from object behaviour collide_canpull(..)
 static void player_control_pull(void)
 {
 	// still pulling ?
@@ -127,12 +154,24 @@ static void player_control_pull(void)
 	}
 }
 
+static void player_control_attack(void)
+{
+	// wait till the end and stop at the end.
+	const struct StateDef *std = &sword.def->states[sword.state];
+
+	if (vga_frame%8==7 && sword.frame == std->nb_frames-1 ) { 
+		player_setidle();
+		sword.y=1024; // hide weapon
+	}
+}
 
 void player_control(void)
 {
 	if (player_ispulling()) // pulling ?
 		player_control_pull();
-	else 
+	else if (player_isattacking())
+		player_control_attack();
+	else
 		player_control_walk();
 }
 
@@ -180,16 +219,66 @@ void player_take_anim(int object_type)
 	object_set_state(&player, old_state);
 }
 
+void player_update() 
+{
+	player_control(); // reads gamepad, updates player vx, vy and control. 
+
+	// now check potential collisions and handle them
+	// reads terrain_id of player corners (after movement)
+	Quad collide = object_bg_collide (&player); 
+
+
+	// player can collide with objects onscreen. update collide status
+	player_obj_collide(&collide); 
+
+	if (collide.w) message("collision : %x\n",collide.w);
+
+	// adjusts current speed according to blocking status of each corner
+	object_block (&player, collide);
+
+	// move player
+	player.x += player.vx;
+	player.y += player.vy;
+
+	object_anim_frame(&player);
+	object_transfer(&player);
+
+	if (status.sword) {	
+		// check sword collision with objects
+
+		object_anim_frame(&sword);
+		object_transfer(&sword);
+	}
+	
+	// move hold object 
+	if (room.hold) {
+		room.hold->x += player.vx;
+		room.hold->y += player.vy;
+	}
+
+	bg_scroll();
+
+	// special for player : handle invincibility (after transfer !)
+	if (room.invincibility_frames) {
+		if (vga_frame%4==0) 
+			player.spr->y = VGA_H_PIXELS;
+		room.invincibility_frames--;
+	}
+}
 
 void player_init(void)
 {
 	player.spr = sprite_new(load_resource(data_hero_spr),0,0,-1); 
 	player.def = &sprite_hero;
-}
 
+	sword.spr = sprite_new(load_resource(data_sword_spr),0,0,-2); // front of player
+	sword.def = &sprite_sword;
+
+}
 
 void player_reset(void) // reset for room
 {
 	object_set_state(&player, state_hero_idle_dn); // reset player 
 	player.vx = player.vy = 0;
+	sword.y = 1024; // hide it.
 }

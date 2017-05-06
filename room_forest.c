@@ -35,9 +35,10 @@ int forest_dialog()
 		if (ans==0) {
 			dlg_bluff;
 		} else {
-			ans=window_dialog(PNJ1, "Newton, eh ? I heard there's trouble brewing down there"),
+			ans=window_dialog(PNJ1, 
+			  _("Newton, eh ? I heard there's trouble brewing down there"),
 			  _("Did I say Newton ? I'm actually from Springville \n")
-			  _("I haven't heard about any trouble")
+			  _("I haven't heard about any trouble"),
 			  );
 
 			return ans==0 ? dlg_bluff() : dlg_ok();

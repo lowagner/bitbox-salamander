@@ -28,6 +28,7 @@
 #include "sprite_rat.h"
 #include "sprite_watermonster.h"
 #include "sprite_pnj.h"
+#include "sprite_sword.h"
 #undef SPRITE_IMPLEMENTATION
 
 #define MAX_COMPRESSED 16 // max nb of decompressed objects at once

@@ -176,7 +176,6 @@ void window_inventory()
 				0,i);
 	}
 
-
 	window_set(window->h); // show all
 
 	// wait for re-press ENTER to leave
